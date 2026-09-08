@@ -419,7 +419,7 @@ app.post('/api/create-checkout-session', async (req, res) => {
           unit_amount: Math.round(quotation.totalTTC * 100),
           product_data: {
             name: `${product.name} — ${item.width} × ${item.depth} cm`,
-            description: 'Estimation à valider par un conseiller B&B Pergolas.',
+            description: `Configuration sur mesure B&B Pergolas • ${item.materialId || 'Aluminium'} • Prix TTC`,
           },
         },
         quantity: Math.max(1, Math.min(10, Number(item.quantity) || 1)),
@@ -429,10 +429,26 @@ app.post('/api/create-checkout-session', async (req, res) => {
     const baseUrl = process.env.PUBLIC_APP_URL || `${req.protocol}://${req.get('host')}`;
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
+      locale: 'fr',
       customer_email: customer.email.trim(),
+      customer_creation: 'always',
+      billing_address_collection: 'required',
+      phone_number_collection: { enabled: true },
       line_items: lineItems,
       success_url: `${baseUrl}/?payment=success&order=${encodeURIComponent(orderId)}&session_id={CHECKOUT_SESSION_ID}#top`,
       cancel_url: `${baseUrl}/?payment=cancelled#top`,
+      custom_text: {
+        submit: {
+          message: 'Paiement sécurisé par Stripe. Votre bon de commande vous sera envoyé par e-mail après confirmation.',
+        },
+        after_submit: {
+          message: 'Merci pour votre confiance. B&B Pergolas va préparer la confirmation de votre projet.',
+        },
+      },
+      payment_intent_data: {
+        description: `B&B Pergolas — commande ${orderId}`,
+        metadata: { orderId },
+      },
       metadata: { orderId, firstName: customer.firstName.trim(), lastName: customer.lastName.trim() },
     });
     return res.json({ url: session.url, orderId });
