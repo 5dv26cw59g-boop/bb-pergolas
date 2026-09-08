@@ -16,9 +16,7 @@ import { fileURLToPath } from 'node:url';
 
 
 
-const PORT = Number(process.env.PORT || 3001);
-
-const ROOT_DIR = path.dirname(fileURLToPath(import.meta.url));
+const PORT = Number(process.env.PORT || 3001);const ROOT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
 const DIST_DIR = path.resolve(ROOT_DIR, '..', 'dist');
 
