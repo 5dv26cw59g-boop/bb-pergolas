@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 const PORT = Number(process.env.PORT || 3001);
 const ROOT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const DIST_DIR = path.resolve(ROOT_DIR, '..', 'dist');
-const QUOTE_RECIPIENT = 'eminbilici68@gmail.com';
+const QUOTE_RECIPIENT = process.env.QUOTE_RECIPIENT || 'eminbilici68@gmail.com';
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 const safeFilePart = (value) => String(value ?? '')
   .normalize('NFD')
@@ -92,8 +92,12 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
   }
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    const customerEmail = session.customer_details?.email;
-    if (customerEmail && process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASSWORD) {
+    if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASSWORD) {
+      console.error(`Paiement ${session.id} reçu mais e-mail non envoyé : variables SMTP manquantes.`);
+      return res.status(503).send('Service e-mail non configuré');
+    }
+    const customerEmail = session.customer_details?.email || session.customer_email;
+    if (customerEmail) {
       const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT || 587),
@@ -134,7 +138,7 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
       const customerName = `${firstName} ${lastName}`.trim();
       const pdfAttachment = Buffer.from(pdf.output('arraybuffer'));
       await transporter.sendMail({
-        from: process.env.SMTP_USER,
+        from: process.env.SMTP_FROM || process.env.SMTP_USER,
         to: customerEmail,
         bcc: QUOTE_RECIPIENT,
         subject: `B&B Pergolas — Confirmation de votre commande ${orderId}`,
@@ -182,7 +186,7 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
         attachments: [{ filename: `Bon de commande - ${customerName}.pdf`, content: pdfAttachment, contentType: 'application/pdf' }],
       });
     }
-    console.log(`Paiement Stripe confirmé : ${session.id}`);
+    console.log(`Paiement Stripe confirmé et e-mails envoyés : ${session.id}`);
   }
   return res.json({ received: true });
 });
@@ -465,6 +469,7 @@ app.post('/api/create-checkout-session', async (req, res) => {
       },
       payment_intent_data: {
         description: `B&B Pergolas — commande ${orderId}`,
+        receipt_email: customer.email.trim(),
         metadata: { orderId },
       },
       metadata: { orderId, firstName: customer.firstName.trim(), lastName: customer.lastName.trim() },
