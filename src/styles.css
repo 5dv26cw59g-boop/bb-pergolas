@@ -785,7 +785,7 @@ button {
   gap: 9px;
   height: 300px;
   width: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
 }
 
@@ -1946,7 +1946,7 @@ button {
 
   .product-config-visual img {
     height: clamp(220px, 62vw, 280px);
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
   }
 
