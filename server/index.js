@@ -188,6 +188,7 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
             </div>
           </div>`,
         attachments: [{ filename: `Bon de commande - ${customerName}.pdf`, content: pdfAttachment, contentType: 'application/pdf' }],
+      });
       } catch (error) {
         console.error(`Paiement ${session.id} confirmé, mais e-mail non envoyé :`, error);
       }
