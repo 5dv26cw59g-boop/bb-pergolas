@@ -220,6 +220,16 @@ function showToast(message) {
   }, 2800);
 }
 
+function readStoredJson(key, fallback = {}) {
+  const value = localStorage.getItem(key);
+  if (!value) return fallback;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return fallback;
+  }
+}
+
 function paymentResultMarkup() {
   const payment = new URLSearchParams(window.location.search).get('payment');
   if (payment === 'success') {
@@ -228,7 +238,13 @@ function paymentResultMarkup() {
       saveCart();
     }
     const order = new URLSearchParams(window.location.search).get('order') || 'en cours de génération';
-    return `<section class="payment-result success"><button class="payment-result-close" type="button" data-dismiss-payment aria-label="Fermer la confirmation">×</button><div class="payment-result-icon">✓</div><span class="kicker">Paiement confirmé</span><h2>Merci, votre demande a bien été enregistrée.</h2><p>Référence : <strong>${order}</strong>. Un conseiller va vérifier les dimensions et vous recontactera avant fabrication.</p><div class="payment-result-actions"><button class="primary-btn" type="button" data-download-summary> Télécharger le résumé</button><a class="secondary-btn" href="#configurateur">Voir ma configuration</a></div></section>`;
+    const customer = readStoredJson('bb-checkout-customer');
+    const lastOrder = readStoredJson('bb-last-order', []);
+    const item = lastOrder[0];
+    const customerName = [customer.firstName, customer.lastName].filter(Boolean).join(' ');
+    const customerAddress = [customer.address, customer.postalCode, customer.city].filter(Boolean).join(', ');
+    const total = item ? money(item.totalTTC * item.quantity) : 'Selon validation';
+    return `<section class="payment-result success"><button class="payment-result-close" type="button" data-dismiss-payment aria-label="Fermer la confirmation">×</button><div class="payment-result-icon">✓</div><div class="payment-result-layout"><div><span class="kicker">Paiement confirmé</span><h2>Merci, votre projet est bien enregistré.</h2><p>Référence : <strong>${order}</strong>. Un conseiller va vérifier les dimensions et vous recontactera avant fabrication.</p><div class="payment-result-actions"><button class="primary-btn" type="button" data-download-summary>Télécharger le résumé</button><a class="secondary-btn" href="#configurateur">Voir ma configuration</a></div></div><div class="payment-order-card">${item ? `<img src="${item.image}" alt="${item.productName}" /><div><strong>${item.productName}</strong><span>${item.width} × ${item.depth} cm · ${item.quantity} unité${item.quantity > 1 ? 's' : ''}</span><b>${total} TTC</b></div>` : ''}<dl><div><dt>Client</dt><dd>${customerName || 'Coordonnées enregistrées'}</dd></div><div><dt>Livraison</dt><dd>${customerAddress || 'Adresse enregistrée'}</dd></div><div><dt>E-mail</dt><dd>${customer.email || 'E-mail enregistré'}</dd></div></dl></div></div></section>`;
   }
   if (payment === 'cancelled') {
     return `<section class="payment-result cancelled"><button class="payment-result-close" type="button" data-dismiss-payment aria-label="Fermer la confirmation">×</button><span class="kicker">Paiement interrompu</span><h2>Votre projet est toujours sauvegardé.</h2><p>Aucun paiement n’a été enregistré. Vous pouvez rouvrir le panier et réessayer quand vous le souhaitez.</p><button class="primary-btn" type="button" data-open-cart>Rouvrir le panier</button></section>`;
@@ -1122,8 +1138,8 @@ function render() {
     const pageWidth = pdf.internal.pageSize.getWidth();
     const margin = 18;
     const right = pageWidth - margin;
-    const item = state.cart[0];
-    const customer = JSON.parse(localStorage.getItem('bb-checkout-customer') || '{}');
+    const item = readStoredJson('bb-last-order', [])[0] || state.cart[0];
+    const customer = readStoredJson('bb-checkout-customer');
     const product = item ? CATALOGUE.find((entry) => entry.id === item.productId) : getProduct();
     const price = item ? { totalHT: item.totalHT, totalTTC: item.totalTTC } : calculatePrice(product);
     const today = new Intl.DateTimeFormat('fr-FR', { dateStyle: 'long' }).format(new Date());
@@ -1366,6 +1382,7 @@ function render() {
       postalCode: formData.get('postalCode'),
       city: formData.get('city'),
     }));
+    localStorage.setItem('bb-last-order', JSON.stringify(state.cart));
     const submit = form.querySelector('button[type="submit"]');
     submit.disabled = true;
     submit.textContent = 'Ouverture du paiement sécurisé…';
@@ -1452,11 +1469,9 @@ function render() {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add('is-visible');
-      } else {
-        entry.target.classList.remove('is-visible');
       }
     });
-  }, { threshold: 0.14, rootMargin: '0px 0px -8% 0px' });
+  }, { threshold: 0.01, rootMargin: '0px 0px 18% 0px' });
 
   document.querySelectorAll('.section, .product-card, .stat, .journey-step, .quote-request, .technical-tabs').forEach((element, index) => {
     element.classList.add('scroll-3d');

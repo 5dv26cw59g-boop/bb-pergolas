@@ -280,6 +280,16 @@ button {
 .payment-result-icon { display: grid; place-items: center; width: 42px; height: 42px; margin-bottom: 12px; border-radius: 50%; background: var(--forest); color: var(--white); font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; }
 .payment-result.cancelled { border-left: 4px solid var(--rust); }
 .payment-result-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.payment-result-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, .72fr); gap: 34px; align-items: start; }
+.payment-order-card { display: grid; gap: 16px; padding: 16px; border: 1px solid var(--stone-line); border-radius: 12px; background: var(--stone); }
+.payment-order-card > img { width: 100%; height: 160px; object-fit: contain; object-position: center; border-radius: 8px; background: var(--white); }
+.payment-order-card > div { display: grid; gap: 4px; }
+.payment-order-card span, .payment-order-card b, .payment-order-card dd { font-family: 'Space Grotesk', sans-serif; font-size: .78rem; }
+.payment-order-card b { margin-top: 5px; color: var(--rust); font-size: 1.2rem; }
+.payment-order-card dl { display: grid; gap: 10px; margin: 0; padding-top: 12px; border-top: 1px solid var(--stone-line); }
+.payment-order-card dl > div { display: grid; grid-template-columns: 76px 1fr; gap: 8px; }
+.payment-order-card dt { color: rgba(24, 26, 20, .58); font-size: .7rem; }
+.payment-order-card dd { margin: 0; overflow-wrap: anywhere; }
 
 .btn,
 .gamme-cta,
@@ -773,8 +783,9 @@ button {
   position: relative;
   gap: 9px;
   height: 300px;
-  object-fit: cover;
-  object-position: center 55%;
+  width: 100%;
+  object-fit: contain;
+  object-position: center;
 }
 
 .product-config-visual[data-color='blanc'] img {
@@ -1823,17 +1834,17 @@ button {
 
   .scroll-3d {
     opacity: 0;
-    transform: perspective(1100px) translateY(34px) rotateX(7deg) rotateY(-1.5deg) scale(.985);
+    transform: translateY(16px) scale(.995);
     transform-origin: center bottom;
     transition:
-      opacity .7s ease var(--reveal-delay),
-      transform .8s cubic-bezier(.2,.8,.2,1) var(--reveal-delay);
+      opacity .35s ease var(--reveal-delay),
+      transform .4s cubic-bezier(.2,.8,.2,1) var(--reveal-delay);
     will-change: opacity, transform;
   }
 
   .scroll-3d.is-visible {
     opacity: 1;
-    transform: perspective(1100px) translateY(0) rotateX(0) rotateY(0) scale(1);
+    transform: translateY(0) scale(1);
   }
 
   .product-card.scroll-3d:hover {
@@ -1849,6 +1860,13 @@ button {
       transition: none;
       opacity: 1;
       transform: none;
+    }
+
+    @media (max-width: 620px) {
+      .scroll-3d {
+        transform: translateY(8px);
+        transition-duration: .25s;
+      }
     }
   }
 
@@ -1919,15 +1937,15 @@ button {
   }
 
   .product-config-visual img {
-    height: 230px;
+    height: clamp(250px, 62vw, 330px);
   }
 
   .product-config-visual[data-color='blanc'] img {
-    height: 280px;
+    height: clamp(270px, 70vw, 360px);
   }
 
   .product-config-visual[data-product='pergola-classique'] img {
-    height: 280px;
+    height: clamp(270px, 70vw, 360px);
   }
 
   .quote-form-grid {
@@ -1953,4 +1971,8 @@ button {
   .journey-contact .secondary-btn {
     width: 100%;
   }
+
+  .payment-result { padding: 24px 18px; }
+  .payment-result-layout { grid-template-columns: 1fr; gap: 22px; }
+  .payment-order-card > img { height: 145px; }
 }
