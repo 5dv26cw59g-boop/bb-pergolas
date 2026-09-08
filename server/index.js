@@ -402,6 +402,23 @@ app.post('/api/create-checkout-session', async (req, res) => {
     return res.status(400).json({ error: 'L’adresse e-mail n’est pas valide.' });
   }
   try {
+    const orderId = `BB-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+    const baseUrl = process.env.PUBLIC_APP_URL || `${req.protocol}://${req.get('host')}`;
+    const customerAddress = customer.address?.trim() && customer.postalCode?.trim() && customer.city?.trim()
+      ? {
+          line1: customer.address.trim(),
+          postal_code: customer.postalCode.trim(),
+          city: customer.city.trim(),
+          country: 'FR',
+        }
+      : undefined;
+    const stripeCustomer = await stripe.customers.create({
+      name: `${customer.firstName.trim()} ${customer.lastName.trim()}`,
+      email: customer.email.trim(),
+      phone: customer.phone?.trim() || undefined,
+      address: customerAddress,
+      metadata: { orderId, source: 'bb-pergolas-checkout' },
+    });
     const lineItems = items.map((item) => {
       const product = PRODUCT_CATALOG.find((entry) => entry.id === item.productId);
       if (!product) throw new Error('Produit du panier introuvable.');
@@ -420,20 +437,21 @@ app.post('/api/create-checkout-session', async (req, res) => {
           product_data: {
             name: `${product.name} — ${item.width} × ${item.depth} cm`,
             description: `Configuration sur mesure B&B Pergolas • ${item.materialId || 'Aluminium'} • Prix TTC`,
+            images: [item.image?.startsWith('http')
+              ? item.image
+              : `${baseUrl}${item.image?.startsWith('/') ? item.image : '/pergola-bioclimatique-cocoon-xl-mixte-gris-anthracite-blanc-700x4987m.webp'}`],
           },
         },
         quantity: Math.max(1, Math.min(10, Number(item.quantity) || 1)),
       };
     });
-    const orderId = `BB-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-    const baseUrl = process.env.PUBLIC_APP_URL || `${req.protocol}://${req.get('host')}`;
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       locale: 'fr',
-      customer_email: customer.email.trim(),
-      customer_creation: 'always',
+      customer: stripeCustomer.id,
       billing_address_collection: 'required',
       phone_number_collection: { enabled: true },
+      shipping_address_collection: { allowed_countries: ['FR'] },
       line_items: lineItems,
       success_url: `${baseUrl}/?payment=success&order=${encodeURIComponent(orderId)}&session_id={CHECKOUT_SESSION_ID}#top`,
       cancel_url: `${baseUrl}/?payment=cancelled#top`,
