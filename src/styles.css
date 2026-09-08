@@ -1164,6 +1164,8 @@ button {
   position: relative;
   grid-column: 2;
   grid-row: 2;
+  min-width: 0;
+  overflow: hidden;
   display: grid;
   place-content: center;
   gap: 4px;
@@ -1185,6 +1187,11 @@ button {
 
 .pergola-drawing {
   display: none;
+  width: 100%;
+  max-width: 190px;
+  height: auto;
+  justify-self: center;
+  transform: translateX(-4px);
 }
 
 .side-center > span,
@@ -1949,6 +1956,21 @@ button {
 
   .product-config-visual[data-product='pergola-classique'] img {
     height: clamp(230px, 70vw, 300px);
+  }
+
+  .side-layout-3d {
+    grid-template-columns: 58px minmax(0, 1fr) 58px;
+    width: 100%;
+    max-width: 277px;
+  }
+
+  .side-center {
+    min-width: 0;
+  }
+
+  .pergola-drawing {
+    max-width: 178px;
+    transform: translateX(-7px);
   }
 
   .quote-form-grid {
