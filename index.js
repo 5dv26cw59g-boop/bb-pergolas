@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 const PORT = Number(process.env.PORT || 3001);
 const ROOT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const DIST_DIR = path.resolve(ROOT_DIR, '..', 'dist');
-const QUOTE_RECIPIENT = 'eminbilici68@gmail.com';
+const QUOTE_RECIPIENT = process.env.QUOTE_RECIPIENT || 'eminbilici68@gmail.com';
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 const safeFilePart = (value) => String(value ?? '')
   .normalize('NFD')
@@ -92,8 +92,12 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
   }
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    const customerEmail = session.customer_details?.email;
-    if (customerEmail && process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASSWORD) {
+    if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASSWORD) {
+      console.error(`Paiement ${session.id} reçu mais e-mail non envoyé : variables SMTP manquantes.`);
+      return res.status(503).send('Service e-mail non configuré');
+    }
+    const customerEmail = session.customer_details?.email || session.customer_email;
+    if (customerEmail) {
       const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT || 587),
@@ -134,7 +138,7 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
       const customerName = `${firstName} ${lastName}`.trim();
       const pdfAttachment = Buffer.from(pdf.output('arraybuffer'));
       await transporter.sendMail({
-        from: process.env.SMTP_USER,
+        from: process.env.SMTP_FROM || process.env.SMTP_USER,
         to: customerEmail,
         bcc: QUOTE_RECIPIENT,
         subject: `B&B Pergolas — Confirmation de votre commande ${orderId}`,
@@ -182,7 +186,7 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
         attachments: [{ filename: `Bon de commande - ${customerName}.pdf`, content: pdfAttachment, contentType: 'application/pdf' }],
       });
     }
-    console.log(`Paiement Stripe confirmé : ${session.id}`);
+    console.log(`Paiement Stripe confirmé et e-mails envoyés : ${session.id}`);
   }
   return res.json({ received: true });
 });
@@ -402,6 +406,23 @@ app.post('/api/create-checkout-session', async (req, res) => {
     return res.status(400).json({ error: 'L’adresse e-mail n’est pas valide.' });
   }
   try {
+    const orderId = `BB-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+    const baseUrl = process.env.PUBLIC_APP_URL || `${req.protocol}://${req.get('host')}`;
+    const customerAddress = customer.address?.trim() && customer.postalCode?.trim() && customer.city?.trim()
+      ? {
+          line1: customer.address.trim(),
+          postal_code: customer.postalCode.trim(),
+          city: customer.city.trim(),
+          country: 'FR',
+        }
+      : undefined;
+    const stripeCustomer = await stripe.customers.create({
+      name: `${customer.firstName.trim()} ${customer.lastName.trim()}`,
+      email: customer.email.trim(),
+      phone: customer.phone?.trim() || undefined,
+      address: customerAddress,
+      metadata: { orderId, source: 'bb-pergolas-checkout' },
+    });
     const lineItems = items.map((item) => {
       const product = PRODUCT_CATALOG.find((entry) => entry.id === item.productId);
       if (!product) throw new Error('Produit du panier introuvable.');
@@ -419,20 +440,38 @@ app.post('/api/create-checkout-session', async (req, res) => {
           unit_amount: Math.round(quotation.totalTTC * 100),
           product_data: {
             name: `${product.name} — ${item.width} × ${item.depth} cm`,
-            description: 'Estimation à valider par un conseiller B&B Pergolas.',
+            description: `Configuration sur mesure B&B Pergolas • ${item.materialId || 'Aluminium'} • Prix TTC`,
+            images: [item.image?.startsWith('http')
+              ? item.image
+              : `${baseUrl}${item.image?.startsWith('/') ? item.image : '/pergola-bioclimatique-cocoon-xl-mixte-gris-anthracite-blanc-700x4987m.webp'}`],
           },
         },
         quantity: Math.max(1, Math.min(10, Number(item.quantity) || 1)),
       };
     });
-    const orderId = `BB-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-    const baseUrl = process.env.PUBLIC_APP_URL || `${req.protocol}://${req.get('host')}`;
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      customer_email: customer.email.trim(),
+      locale: 'fr',
+      customer: stripeCustomer.id,
+      billing_address_collection: 'required',
+      phone_number_collection: { enabled: true },
+      shipping_address_collection: { allowed_countries: ['FR'] },
       line_items: lineItems,
       success_url: `${baseUrl}/?payment=success&order=${encodeURIComponent(orderId)}&session_id={CHECKOUT_SESSION_ID}#top`,
       cancel_url: `${baseUrl}/?payment=cancelled#top`,
+      custom_text: {
+        submit: {
+          message: 'Paiement sécurisé par Stripe. Votre bon de commande vous sera envoyé par e-mail après confirmation.',
+        },
+        after_submit: {
+          message: 'Merci pour votre confiance. B&B Pergolas va préparer la confirmation de votre projet.',
+        },
+      },
+      payment_intent_data: {
+        description: `B&B Pergolas — commande ${orderId}`,
+        receipt_email: customer.email.trim(),
+        metadata: { orderId },
+      },
       metadata: { orderId, firstName: customer.firstName.trim(), lastName: customer.lastName.trim() },
     });
     return res.json({ url: session.url, orderId });
