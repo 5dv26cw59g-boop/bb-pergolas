@@ -765,6 +765,7 @@ button {
 .config-panel,
 .summary-panel {
   padding: 2rem;
+  min-width: 0;
 }
 
 .config-panel {
@@ -1937,15 +1938,17 @@ button {
   }
 
   .product-config-visual img {
-    height: clamp(250px, 62vw, 330px);
+    height: clamp(220px, 62vw, 280px);
+    object-fit: contain;
+    object-position: center;
   }
 
   .product-config-visual[data-color='blanc'] img {
-    height: clamp(270px, 70vw, 360px);
+    height: clamp(230px, 70vw, 300px);
   }
 
   .product-config-visual[data-product='pergola-classique'] img {
-    height: clamp(270px, 70vw, 360px);
+    height: clamp(230px, 70vw, 300px);
   }
 
   .quote-form-grid {
