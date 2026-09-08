@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>B&amp;B Pergolas — Aluminium sur mesure, Haut-Rhin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400;1,8..60,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --anthracite: #24281F;
+    --anthracite-2: #2F3527;
+    --stone: #EFEBDD;
+    --stone-line: #DAD3BE;
+    --forest: #3B4A32;
+    --forest-2: #4C5E40;
+    --rust: #A85226;
+    --rust-light: #D98B52;
+    --alu: #9A9D8E;
+    --ink: #181A14;
+    --white: #FCFAF4;
+    --shadow-sm: 0 2px 10px rgba(24,26,20,0.06);
+    --shadow-md: 0 14px 34px rgba(24,26,20,0.14);
+    --shadow-lg: 0 24px 60px rgba(24,26,20,0.22);
+    --ease: cubic-bezier(.22,.68,0,1);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--stone);
+    color:var(--ink);
+    font-family:'Source Serif 4', serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .display{ font-family:'Space Grotesk', sans-serif; }
+  a{ color:inherit; text-decoration:none; }
+  img{ max-width:100%; display:block; }
+  ::selection{ background:var(--rust); color:var(--white); }
+  :focus-visible{ outline:2px solid var(--rust); outline-offset:2px; }
+  .container{ max-width:1200px; margin:0 auto; padding:0 40px; }
+  @media (max-width:700px){ .container{ padding:0 22px; } }
+
+  .reveal{ opacity:0; transform:translateY(18px); transition:opacity .7s var(--ease), transform .7s var(--ease); }
+  .reveal.in{ opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){ .reveal{ opacity:1; transform:none; transition:none; } }
+
+  /* ---------- HEADER ---------- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 40px;
+    position:sticky; top:0; z-index:50;
+    background:rgba(239,235,221,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid transparent;
+    transition:border-color .3s var(--ease), box-shadow .3s var(--ease);
+  }
+  header.scrolled{ border-color:var(--stone-line); box-shadow:var(--shadow-sm); }
+  @media (max-width:700px){ header{ padding:16px 22px; } }
+  .logo{ font-family:'Space Grotesk'; font-weight:700; font-size:19px; letter-spacing:-0.01em; }
+  .logo span{ color:var(--rust); }
+  nav{ display:flex; gap:32px; font-family:'Space Grotesk'; font-size:14px; font-weight:500; }
+  @media (max-width:800px){ nav{ display:none; } }
+  nav a{ position:relative; padding:4px 0; }
+  nav a::after{ content:''; position:absolute; left:0; bottom:0; width:0; height:1.5px; background:var(--rust); transition:width .25s var(--ease); }
+  nav a:hover::after{ width:100%; }
+  .header-cta{ display:flex; align-items:center; gap:18px; font-family:'Space Grotesk'; font-size:14px; font-weight:500; }
+  @media (max-width:520px){ .header-cta a:first-child{ display:none; } }
+
+  .btn-primary, .btn-outline, .gamme-cta{ transition:transform .2s var(--ease), background-color .2s var(--ease), box-shadow .2s var(--ease); }
+  .btn-primary{
+    background:var(--anthracite); color:var(--white);
+    padding:11px 22px; border-radius:4px; font-family:'Space Grotesk'; font-weight:500; font-size:14px;
+    display:inline-block;
+  }
+  .btn-primary:hover{ background:#151810; transform:translateY(-1px); box-shadow:var(--shadow-sm); }
+  .btn-outline{
+    border:1px solid var(--ink); padding:10px 21px; border-radius:4px;
+    font-family:'Space Grotesk'; font-weight:500; font-size:14px; display:inline-block;
+  }
+  .btn-outline:hover{ background:var(--ink); color:var(--white); }
+
+  /* ---------- HERO ---------- */
+  .hero{ display:grid; grid-template-columns: 1fr 1fr; align-items:center; gap:52px; padding: 56px 0 88px; }
+  @media (max-width:900px){ .hero{ grid-template-columns:1fr; padding:36px 0 56px; gap:34px; } }
+  .hero-tag{
+    font-family:'Space Grotesk'; font-size:13px; letter-spacing:0.05em; color:var(--forest); font-weight:500;
+    display:flex; align-items:center; gap:9px; margin-bottom:24px;
+  }
+  .hero-tag::before{ content:''; width:7px; height:7px; background:var(--rust); border-radius:50%; display:inline-block; box-shadow:0 0 0 4px rgba(168,82,38,0.16); }
+  .hero h1{
+    font-family:'Space Grotesk'; font-weight:600; font-size:clamp(36px,4.8vw,60px);
+    line-height:1.03; letter-spacing:-0.02em; max-width:12ch; margin-bottom:24px;
+  }
+  .hero h1 em{ font-style:italic; font-family:'Source Serif 4'; font-weight:500; color:var(--rust); }
+  .hero p{ font-size:18.5px; color:#3A3E32; max-width:42ch; margin-bottom:34px; }
+  .hero-ctas{ display:flex; gap:14px; flex-wrap:wrap; }
+  .hero-ctas .btn-primary{ padding:16px 28px; }
+  .hero-ctas .btn-outline{ padding:15px 27px; }
+
+  .hero-photo{ position:relative; border-radius:8px; overflow:hidden; background:var(--anthracite); box-shadow:var(--shadow-lg); }
+  .hero-photo img{ width:100%; height:460px; object-fit:cover; display:block; transform:scale(1.01); }
+  .hero-photo::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(24,26,20,0) 55%, rgba(24,26,20,0.55) 100%);
+    pointer-events:none;
+  }
+  .hero-photo .blueprint{ position:absolute; inset:0; width:100%; height:100%; z-index:1; }
+  .hero-photo .photo-credit{
+    position:absolute; bottom:16px; left:18px; z-index:2;
+    background:rgba(24,26,20,0.55); backdrop-filter:blur(4px); color:var(--white);
+    font-family:'Space Grotesk'; font-size:11px; letter-spacing:0.04em;
+    padding:7px 12px; border-radius:4px;
+  }
+  .blueprint{ width:100%; }
+  .bp-line{ stroke:var(--white); stroke-width:1.4; fill:none; opacity:0.9; }
+  .bp-dim{ stroke:var(--white); stroke-width:1; opacity:0.6; }
+  .bp-text{ font-family:'Space Grotesk'; font-size:11px; fill:var(--white); opacity:0.9; letter-spacing:0.02em; }
+  .bp-accent{ stroke:var(--rust-light); opacity:1; }
+
+  /* ---------- STATS ---------- */
+  .stats{
+    border-top:1px solid var(--stone-line); border-bottom:1px solid var(--stone-line);
+    display:grid; grid-template-columns:repeat(4,1fr);
+    background:linear-gradient(180deg, rgba(255,255,255,0.35), transparent);
+  }
+  @media (max-width:700px){ .stats{ grid-template-columns:repeat(2,1fr); } }
+  .stat{ padding:32px 40px; border-right:1px solid var(--stone-line); }
+  .stat:last-child{ border-right:none; }
+  @media (max-width:700px){ .stat{ padding:22px; } .stat:nth-child(2){ border-right:none; } }
+  .stat .num{ font-family:'Space Grotesk'; font-weight:600; font-size:31px; color:var(--rust); letter-spacing:-0.01em; }
+  .stat .label{ font-size:13px; color:#4B4F41; margin-top:5px; }
+
+  /* ---------- SECTION HEAD ---------- */
+  .section-head{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:44px; gap:20px; flex-wrap:wrap; }
+  .section-head h2{ font-family:'Space Grotesk'; font-weight:600; font-size:clamp(27px,3vw,35px); max-width:15ch; letter-spacing:-0.01em; }
+  .section-head p{ font-size:15px; color:#4B4F41; max-width:36ch; }
+  .kicker{ font-family:'Space Grotesk'; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--rust); font-weight:600; display:block; margin-bottom:10px; }
+
+  /* ---------- GAMMES (3 familles) ---------- */
+  .gammes{ padding:92px 0; }
+  .gammes-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; align-items:stretch; }
+  @media (max-width:900px){ .gammes-grid{ grid-template-columns:1fr; } }
+  .gamme-card{
+    background:var(--white); border:1px solid var(--stone-line); border-radius:10px; overflow:hidden;
+    display:flex; flex-direction:column;
+    transition:transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease);
+  }
+  .gamme-card:hover{ transform:translateY(-6px); box-shadow:var(--shadow-md); border-color:transparent; }
+  .gamme-card.highlight{ border-color:var(--anthracite); box-shadow:0 0 0 1px var(--anthracite); }
+  .gamme-card.highlight:hover{ box-shadow:0 0 0 1px var(--anthracite), var(--shadow-md); }
+  .gamme-photo{ position:relative; height:240px; overflow:hidden; }
+  .gamme-photo img{ width:100%; height:100%; object-fit:cover; transition:transform .5s var(--ease); }
+  .gamme-card:hover .gamme-photo img{ transform:scale(1.06); }
+  .gamme-eyebrow{
+    position:absolute; top:14px; left:14px; z-index:1;
+    background:rgba(24,26,20,0.8); backdrop-filter:blur(4px); color:var(--white);
+    font-family:'Space Grotesk'; font-size:11px; letter-spacing:0.05em; text-transform:uppercase;
+    padding:7px 11px; border-radius:4px;
+  }
+  .gamme-body{ padding:26px 26px 28px; display:flex; flex-direction:column; flex:1; }
+  .gamme-body h3{ font-family:'Space Grotesk'; font-weight:600; font-size:21px; margin-bottom:9px; letter-spacing:-0.01em; }
+  .gamme-body .gamme-desc{ font-size:14.5px; color:#454A3B; margin-bottom:18px; }
+  .gamme-features{ list-style:none; margin-bottom:24px; }
+  .gamme-features li{
+    font-size:13.5px; color:var(--ink); padding:9px 0; border-top:1px solid var(--stone-line);
+    display:flex; gap:9px; align-items:baseline;
+  }
+  .gamme-features li::before{ content:'—'; color:var(--rust); font-family:'Space Grotesk'; }
+  .gamme-footer{ margin-top:auto; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .gamme-price{ font-family:'Space Grotesk'; }
+  .gamme-price .from{ font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--alu); display:block; }
+  .gamme-price .amount{ font-size:19px; font-weight:600; }
+  .gamme-cta{
+    background:var(--anthracite); color:var(--white); font-family:'Space Grotesk'; font-size:13.5px; font-weight:500;
+    padding:11px 17px; border-radius:5px; white-space:nowrap; display:inline-block;
+  }
+  .gamme-cta:hover{ transform:translateY(-1px); box-shadow:var(--shadow-sm); }
+  .gamme-card.highlight .gamme-cta{ background:var(--rust); }
+  .gamme-card.highlight .gamme-cta:hover{ background:#8F441E; }
+
+  /* ---------- CATALOG GRID ---------- */
+  .cat-section{ padding:92px 0; }
+  .cat-grid{ display:grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(2, 205px); gap:14px; }
+  @media (max-width:900px){ .cat-grid{ grid-template-columns:repeat(2,1fr); grid-template-rows:repeat(4,175px); } }
+  .cat-tile{
+    position:relative; border-radius:8px; overflow:hidden;
+    background-color:var(--anthracite); background-size:cover; background-position:center;
+    color:var(--white);
+    display:flex; flex-direction:column; justify-content:flex-end;
+    padding:22px;
+    transition:transform .35s var(--ease), box-shadow .35s var(--ease);
+  }
+  .cat-tile:hover{ transform:translateY(-4px); box-shadow:var(--shadow-md); }
+  .cat-tile::before{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(20,22,17,0) 35%, rgba(20,22,17,0.86) 100%);
+    z-index:0; transition:background .35s var(--ease);
+  }
+  .cat-tile::after{
+    content:''; position:absolute; inset:0; background-size:inherit; background-position:inherit; background-image:inherit;
+    z-index:-1; transform:scale(1); transition:transform .5s var(--ease);
+  }
+  .cat-tile > *{ position:relative; z-index:1; }
+  .cat-tile.featured{ grid-column:span 3; grid-row:span 2; }
+  .cat-tile.medium{ grid-column:span 3; grid-row:span 1; }
+  .cat-tile.small{ grid-column:span 2; grid-row:span 1; }
+  @media (max-width:900px){
+    .cat-tile.featured{ grid-column:span 2; grid-row:span 2; }
+    .cat-tile.medium{ grid-column:span 2; grid-row:span 1; }
+    .cat-tile.small{ grid-column:span 1; grid-row:span 1; }
+  }
+  .cat-tile .cat-name{ font-family:'Space Grotesk'; font-weight:600; font-size:20px; margin-bottom:4px; }
+  .cat-tile.featured .cat-name{ font-size:27px; }
+  .cat-tile .cat-desc{ font-size:13px; opacity:0.9; font-family:'Source Serif 4'; max-width:26ch; }
+  .cat-tile .cat-arrow{
+    position:absolute; top:16px; right:16px; z-index:1; font-family:'Space Grotesk'; font-size:16px;
+    width:30px; height:30px; border-radius:50%; background:rgba(252,250,244,0.16);
+    display:flex; align-items:center; justify-content:center;
+    transition:background .25s var(--ease), transform .25s var(--ease);
+  }
+  .cat-tile:hover .cat-arrow{ background:var(--rust); transform:rotate(45deg); }
+
+  /* ---------- GALLERY ---------- */
+  .gallery{ padding:92px 0; border-top:1px solid var(--stone-line); }
+  .gallery-grid{ display:grid; grid-template-columns: 1.3fr 1fr 1fr; grid-template-rows: repeat(2, 215px); gap:14px; }
+  @media (max-width:900px){ .gallery-grid{ grid-template-columns:1fr 1fr; grid-template-rows:repeat(3,175px);} }
+  .gallery-item{ position:relative; border-radius:8px; overflow:hidden; }
+  .gallery-item img{ width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s var(--ease); }
+  .gallery-item:hover img{ transform:scale(1.07); }
+  .gallery-item.tall{ grid-row:span 2; }
+  @media (max-width:900px){ .gallery-item.tall{ grid-row:span 1; } }
+  .gallery-item .tag{
+    position:absolute; bottom:12px; left:12px;
+    background:rgba(24,26,20,0.72); backdrop-filter:blur(4px); color:var(--white);
+    font-family:'Space Grotesk'; font-size:11px; padding:7px 11px; border-radius:4px;
+  }
+
+  /* ---------- STORY ---------- */
+  .story{ display:grid; grid-template-columns:0.9fr 1.1fr; gap:60px; padding:92px 0; border-top:1px solid var(--stone-line); }
+  @media (max-width:900px){ .story{ grid-template-columns:1fr; gap:30px; } }
+  .story h2{ font-family:'Space Grotesk'; font-weight:600; font-size:clamp(25px,2.8vw,33px); max-width:12ch; letter-spacing:-0.01em; }
+  .story-list{ list-style:none; }
+  .story-list li{ display:flex; gap:18px; padding:22px 0; border-top:1px solid var(--stone-line); }
+  .story-list li:last-child{ border-bottom:1px solid var(--stone-line); }
+  .story-list .idx{ font-family:'Space Grotesk'; color:var(--rust); font-weight:600; font-size:14px; min-width:26px; }
+  .story-list h3{ font-family:'Space Grotesk'; font-size:16.5px; font-weight:600; margin-bottom:5px; }
+  .story-list p{ font-size:14.5px; color:#4B4F41; }
+
+  /* ---------- CTA STRIP ---------- */
+  .cta-strip{
+    background:linear-gradient(135deg, var(--anthracite) 0%, #171912 100%);
+    color:var(--white); padding:68px 0; text-align:left;
+  }
+  .cta-strip .container{ display:flex; justify-content:space-between; align-items:center; gap:24px; flex-wrap:wrap; }
+  .cta-strip h2{ font-family:'Space Grotesk'; font-weight:600; font-size:clamp(24px,2.8vw,32px); max-width:16ch; letter-spacing:-0.01em; }
+  .cta-strip .btn-primary{ background:var(--rust); padding:17px 30px; }
+  .cta-strip .btn-primary:hover{ background:#8F441E; }
+
+  /* ---------- FOOTER ---------- */
+  footer{ padding:58px 0 42px; }
+  .footer-grid{ display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:40px; margin-bottom:40px; }
+  @media (max-width:700px){ .footer-grid{ grid-template-columns:1fr; gap:26px; } }
+  .footer-grid h4{ font-family:'Space Grotesk'; font-size:13px; text-transform:uppercase; letter-spacing:0.07em; color:var(--forest); margin-bottom:14px; }
+  .footer-grid p, .footer-grid a{ font-size:14.5px; color:#4B4F41; display:block; margin-bottom:8px; }
+  .footer-grid a:hover{ color:var(--rust); }
+  .footer-bottom{ border-top:1px solid var(--stone-line); padding-top:22px; font-size:13px; color:var(--alu); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="logo">B&amp;B <span>Pergolas</span></div>
+  <nav>
+    <a href="#produits">Produits</a>
+    <a href="#realisations">Réalisations</a>
+    <a href="#histoire">L'entreprise</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="header-cta">
+    <a href="tel:0615367504">06 15 36 75 04</a>
+    <a class="btn-primary" href="page-produit.html">Configurer mon projet</a>
+  </div>
+</header>
+
+<div class="container">
+
+  <section class="hero">
+    <div class="reveal">
+      <div class="hero-tag">CERNAY · HAUT-RHIN · DEPUIS 2016</div>
+      <h1>L'aluminium sur mesure, pensé pour <em>durer</em></h1>
+      <p>Pergolas, carports, marquises et menuiseries extérieures fabriqués en France et configurés à vos dimensions exactes — avec un prix qui s'ajuste devant vous, sans attendre de devis.</p>
+      <div class="hero-ctas">
+        <a class="btn-primary" href="page-produit.html">Configurer et acheter en ligne</a>
+        <a class="btn-outline" href="#realisations">Voir nos réalisations</a>
+      </div>
+    </div>
+
+    <div class="hero-photo reveal">
+      <img src="WhatsApp-Image-2026-01-22-at-14.29.17-10.jpeg.webp" alt="Pergola bioclimatique B&amp;B Pergolas installée sur une terrasse">
+      <svg class="blueprint" viewBox="0 0 460 340" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <line class="bp-dim" x1="60" y1="290" x2="400" y2="290"/>
+        <line class="bp-dim" x1="60" y1="284" x2="60" y2="296"/>
+        <line class="bp-dim" x1="400" y1="284" x2="400" y2="296"/>
+        <text class="bp-text" x="230" y="312" text-anchor="middle">LARGEUR CONFIGURABLE — 2 à 8 m</text>
+        <line class="bp-line bp-accent" x1="60" y1="40" x2="60" y2="290" stroke-dasharray="4 4"/>
+        <line class="bp-line bp-accent" x1="400" y1="40" x2="400" y2="290" stroke-dasharray="4 4"/>
+      </svg>
+      <span class="photo-credit">Réalisation B&amp;B Pergolas — Haut-Rhin</span>
+    </div>
+  </section>
+
+  <div class="stats reveal">
+    <div class="stat"><div class="num display">2016</div><div class="label">Année de création, artisan familial</div></div>
+    <div class="stat"><div class="num display">100%</div><div class="label">Fabrication française</div></div>
+    <div class="stat"><div class="num display">20 ans</div><div class="label">Garantie selon les produits</div></div>
+    <div class="stat"><div class="num display">Sur&nbsp;mesure</div><div class="label">Chaque structure, à vos dimensions</div></div>
+  </div>
+
+  <section class="gammes">
+    <div class="section-head reveal">
+      <div>
+        <span class="kicker">Nos gammes</span>
+        <h2>Trois façons de couvrir votre extérieur</h2>
+      </div>
+      <p>Chaque gamme a son propre configurateur — dimensions, matériau et options ajustés en temps réel.</p>
+    </div>
+    <div class="gammes-grid">
+
+      <div class="gamme-card reveal">
+        <div class="gamme-photo">
+          <span class="gamme-eyebrow">Gamme 1</span>
+          <img src="https://bbpergolas.com/wp-content/uploads/2022/03/pergolas-toile-retractable-hautrhin-03.jpg" alt="Pergola classique avec toile rétractable">
+        </div>
+        <div class="gamme-body">
+          <h3>Pergola Classique</h3>
+          <p class="gamme-desc">Structure fixe en aluminium et toile rétractable — l'essentiel pour une terrasse ombragée, au meilleur prix.</p>
+          <ul class="gamme-features">
+            <li>Toile rétractable manuelle ou motorisée</li>
+            <li>Structure autoportante ou adossée</li>
+            <li>Entretien minimal, garantie incluse</li>
+          </ul>
+          <div class="gamme-footer">
+            <div class="gamme-price"><span class="from">à partir de</span><span class="amount">759 € HT</span></div>
+            <a class="gamme-cta" href="page-produit.html">Configurer</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="gamme-card highlight reveal">
+        <div class="gamme-photo">
+          <span class="gamme-eyebrow">Gamme 2 — la plus choisie</span>
+          <img src="pergola-bioclimatique-cocoon-xl-mixte-gris-anthracite-blanc-700x4987m.webp" alt="Pergola bioclimatique à lames orientables">
+        </div>
+        <div class="gamme-body">
+          <h3>Pergola Bioclimatique</h3>
+          <p class="gamme-desc">Lames orientables motorisées pour régler soleil, pluie et ventilation à volonté — l'extérieur utilisable toute l'année.</p>
+          <ul class="gamme-features">
+            <li>Lames orientables, gestion de la pluie</li>
+            <li>Éclairage LED et motorisation en option</li>
+            <li>Évacuation d'eau intégrée aux poteaux</li>
+          </ul>
+          <div class="gamme-footer">
+            <div class="gamme-price"><span class="from">à partir de</span><span class="amount">1 330 € HT</span></div>
+            <a class="gamme-cta" href="fiche-produit-bioclimatique.html">Configurer</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="gamme-card reveal">
+        <div class="gamme-photo">
+          <span class="gamme-eyebrow">Gamme 3</span>
+          <img src="https://bbpergolas.com/wp-content/uploads/2026/01/vitre.jpeg.webp" alt="Véranda et vitrage aluminium sur mesure">
+        </div>
+        <div class="gamme-body">
+          <h3>Véranda</h3>
+          <p class="gamme-desc">Structure vitrée fermée, pour gagner une vraie pièce de vie supplémentaire, isolée et lumineuse toute l'année.</p>
+          <ul class="gamme-features">
+            <li>Vitrage double ou triple au choix</li>
+            <li>Porte coulissante en option</li>
+            <li>Structure aluminium fine, grandes surfaces vitrées</li>
+          </ul>
+          <div class="gamme-footer">
+            <div class="gamme-price"><span class="from">à partir de</span><span class="amount">6 838 € HT</span></div>
+            <a class="gamme-cta" href="page-produit.html">Configurer</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="cat-section" id="produits">
+    <div class="section-head reveal">
+      <div>
+        <span class="kicker">Le reste du catalogue</span>
+        <h2>Et pour le reste de votre extérieur</h2>
+      </div>
+      <p>Carports, sas d'entrée, portails et garde-corps — même fabrication sur mesure, même configurateur.</p>
+    </div>
+    <div class="cat-grid reveal">
+      <a class="cat-tile featured" href="page-produit.html" style="background-image:url('https://bbpergolas.com/wp-content/uploads/2026/01/CAPING-CARPORT.jpeg.webp')">
+        <span class="cat-arrow">↗</span>
+        <div class="cat-name display">Carports</div>
+        <div class="cat-desc">Toiture polycarbonate, panneaux sandwich ou verre, pour protéger votre véhicule.</div>
+      </a>
+      <a class="cat-tile medium" href="page-produit.html" style="background-image:url('https://bbpergolas.com/wp-content/uploads/2022/03/portail-aluminium-thann-bbpergolas-11.jpg.webp')">
+        <span class="cat-arrow">↗</span>
+        <div class="cat-name display">Portails &amp; clôtures</div>
+        <div class="cat-desc">Aluminium sur mesure, coloris et style au choix.</div>
+      </a>
+      <a class="cat-tile small" href="page-produit.html" style="background-image:url('https://bbpergolas.com/wp-content/uploads/2026/01/SAS.jpeg.webp')">
+        <div class="cat-name display">Sas d'entrée</div>
+        <div class="cat-desc">Pour protéger une entrée ou une façade.</div>
+      </a>
+      <a class="cat-tile small" href="page-produit.html" style="background-image:url('https://bbpergolas.com/wp-content/uploads/2022/03/gardecorps_bbpergolas_thann.png.webp')">
+        <div class="cat-name display">Garde-corps</div>
+        <div class="cat-desc">Sécurité et esthétisme pour terrasses et balcons.</div>
+      </a>
+    </div>
+  </section>
+
+  <section class="gallery" id="realisations">
+    <div class="section-head reveal">
+      <div>
+        <span class="kicker">Réalisations</span>
+        <h2>Nos dernières installations</h2>
+      </div>
+      <p>Quelques projets livrés dans le Haut-Rhin — la même exigence sur chaque configuration.</p>
+    </div>
+    <div class="gallery-grid reveal">
+      <div class="gallery-item tall">
+        <img src="https://bbpergolas.com/wp-content/uploads/2026/01/l-jour.jpeg.webp" alt="Pergola aluminium de jour, terrasse Haut-Rhin">
+        <span class="tag">Pergola bioclimatique — jour</span>
+      </div>
+      <div class="gallery-item">
+        <img src="https://bbpergolas.com/wp-content/uploads/2022/03/pergolas-toile-retractable-hautrhin-03.jpg" alt="Pergola à toile rétractable">
+        <span class="tag">Toile rétractable</span>
+      </div>
+      <div class="gallery-item">
+        <img src="https://bbpergolas.com/wp-content/uploads/2022/03/gardecorps_bbpergolas_thann.png.webp" alt="Garde-corps aluminium sur mesure">
+        <span class="tag">Garde-corps</span>
+      </div>
+      <div class="gallery-item">
+        <img src="https://bbpergolas.com/wp-content/uploads/2026/01/vitrre2.jpeg.webp" alt="Verrière et vitrage aluminium sur mesure">
+        <span class="tag">Vitrage sur mesure</span>
+      </div>
+      <div class="gallery-item">
+        <img src="https://bbpergolas.com/wp-content/uploads/2026/01/l-nuit.jpeg.webp" alt="Pergola éclairée LED de nuit">
+        <span class="tag">Éclairage LED intégré</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="story" id="histoire">
+    <div class="reveal">
+      <span class="kicker">Notre approche</span>
+      <h2>Un artisan, pas une plateforme</h2>
+    </div>
+    <ul class="story-list reveal">
+      <li>
+        <span class="idx display">01</span>
+        <div>
+          <h3>Vous configurez</h3>
+          <p>Dimensions, matériau et options : le prix s'affiche en temps réel, sans attendre de devis.</p>
+        </div>
+      </li>
+      <li>
+        <span class="idx display">02</span>
+        <div>
+          <h3>Nous fabriquons</h3>
+          <p>Chaque structure est produite en France, à vos dimensions exactes.</p>
+        </div>
+      </li>
+      <li>
+        <span class="idx display">03</span>
+        <div>
+          <h3>Vous recevez</h3>
+          <p>Livraison de votre structure aluminium, prête à installer ou à faire poser.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+</div>
+
+<section class="cta-strip" id="contact">
+  <div class="container">
+    <h2>Prêt à donner vie à votre extérieur ?</h2>
+    <a class="btn-primary display" href="page-produit.html">Configurer mon projet</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>B&amp;B Pergolas</h4>
+        <p>28 Rue de la Sauge, 68700 Cernay — Haut-Rhin</p>
+        <p>Artisan familial, fabrication française depuis 2016.</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <a href="tel:0615367504">06 15 36 75 04</a>
+        <a href="mailto:bbpergolas@hotmail.com">bbpergolas@hotmail.com</a>
+      </div>
+      <div>
+        <h4>Zone d'intervention</h4>
+        <p>Haut-Rhin et Grand Est</p>
+        <p>Lun–Ven, 9h–17h</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 B&amp;B Pergolas</span>
+      <span>Prototype de site — visuel à valider avant mise en ligne</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 8);
+  });
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Pergola Bioclimatique — B&amp;B Pergolas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --surface:#F5F5F2;
+    --border:#E3E2DC;
+    --ink:#16181A;
+    --anthracite:#2B2E2C;
+    --anthracite-hover:#1C1E1C;
+    --grey:#8A8D86;
+    --grey-light:#B9BBB4;
+    --white:#FFFFFF;
+    --success:#3E6B4A;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ font-family:'Inter', sans-serif; color:var(--ink); background:var(--bg); line-height:1.5; -webkit-font-smoothing:antialiased; }
+  a{ color:inherit; text-decoration:none; }
+  button{ font-family:inherit; cursor:pointer; }
+  img{ max-width:100%; display:block; }
+  .container{ max-width:1240px; margin:0 auto; padding:0 32px; }
+  @media (max-width:800px){ .container{ padding:0 18px; } }
+
+  /* ---------- HEADER ---------- */
+  header{ border-bottom:1px solid var(--border); }
+  .header-inner{ display:flex; align-items:center; justify-content:space-between; padding:18px 32px; }
+  @media (max-width:800px){ .header-inner{ padding:14px 18px; } }
+  .logo{ font-weight:700; font-size:17px; }
+  nav.main-nav{ display:flex; gap:28px; font-size:14px; font-weight:500; color:var(--grey); }
+  @media (max-width:800px){ nav.main-nav{ display:none; } }
+  .header-right{ display:flex; align-items:center; gap:18px; font-size:14px; font-weight:500; }
+  .cart-icon{ width:22px; height:22px; border:1.5px solid var(--ink); border-radius:2px; position:relative; }
+
+  .breadcrumb{ font-size:13px; color:var(--grey); padding:18px 0 6px; }
+  .breadcrumb a{ color:var(--grey); }
+  .breadcrumb span{ color:var(--ink); }
+
+  /* ---------- PDP LAYOUT ---------- */
+  .pdp{ display:grid; grid-template-columns: 1.15fr 0.85fr; gap:48px; padding-bottom:40px; align-items:start; }
+  @media (max-width:960px){ .pdp{ grid-template-columns:1fr; } }
+
+  .gallery-main{ border:1px solid var(--border); border-radius:6px; overflow:hidden; background:var(--surface); }
+  .gallery-main img{ width:100%; height:440px; object-fit:cover; }
+  .gallery-thumbs{ display:flex; gap:10px; margin-top:10px; }
+  .gallery-thumbs img{ width:76px; height:76px; object-fit:cover; border-radius:5px; border:2px solid transparent; cursor:pointer; opacity:0.7; }
+  .gallery-thumbs img.active{ border-color:var(--anthracite); opacity:1; }
+
+  .config-col{ position:sticky; top:20px; }
+  h1{ font-size:26px; font-weight:700; margin-bottom:6px; }
+  .tagline{ font-size:14.5px; color:var(--grey); margin-bottom:18px; }
+
+  .trust-row{ display:flex; flex-wrap:wrap; gap:14px; font-size:12.5px; color:var(--grey); margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--border); }
+  .trust-row span{ display:flex; align-items:center; gap:6px; }
+  .trust-row .dot{ width:5px; height:5px; border-radius:50%; background:var(--success); }
+
+  .option-block{ margin-bottom:26px; }
+  .option-label{ font-size:13.5px; font-weight:600; margin-bottom:10px; display:flex; justify-content:space-between; }
+  .option-label .sel{ font-weight:400; color:var(--grey); }
+
+  /* swatches */
+  .swatches{ display:flex; gap:10px; }
+  .swatch{ width:36px; height:36px; border-radius:50%; border:2px solid transparent; cursor:pointer; box-shadow:0 0 0 1px var(--border); position:relative; }
+  .swatch.active{ border-color:var(--anthracite); box-shadow:0 0 0 2px var(--white), 0 0 0 3px var(--anthracite); }
+  .swatch.bicolore{ background:linear-gradient(90deg, #2B2E2C 50%, #FFFFFF 50%); }
+
+  /* size grid */
+  .size-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; }
+  @media (max-width:420px){ .size-grid{ grid-template-columns:repeat(3,1fr); } }
+  .size-pill{
+    border:1.5px solid var(--border); border-radius:5px; padding:10px 4px; text-align:center;
+    font-size:13px; font-weight:500; background:var(--white);
+  }
+  .size-pill.active{ border-color:var(--anthracite); background:var(--anthracite); color:var(--white); }
+
+  /* install toggle */
+  .install-toggle{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .install-card{
+    border:1.5px solid var(--border); border-radius:6px; padding:14px 10px; text-align:center;
+    background:var(--white); display:flex; flex-direction:column; align-items:center; gap:8px;
+  }
+  .install-card svg{ width:44px; height:34px; }
+  .install-card span{ font-size:13px; font-weight:500; }
+  .install-card.active{ border-color:var(--anthracite); background:var(--surface); }
+  .install-card.active span{ font-weight:700; }
+
+  /* side diagram */
+  .side-diagram-wrap{ display:flex; flex-direction:column; align-items:center; }
+  .side-diagram svg{ width:100%; max-width:280px; }
+  .zone{ fill:var(--surface); stroke:var(--border); stroke-width:1.5; cursor:pointer; transition:fill .15s; }
+  .zone:hover{ fill:#E4E4DE; }
+  .zone.active{ fill:var(--anthracite); }
+  .zone.disabled{ fill:var(--border); cursor:not-allowed; opacity:0.5; }
+  .side-hint{ font-size:12px; color:var(--grey); margin-top:8px; text-align:center; }
+
+  /* comfort options */
+  .comfort-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:13px 14px; border:1px solid var(--border); border-radius:6px; margin-bottom:9px;
+  }
+  .comfort-row .name{ font-size:14px; font-weight:500; }
+  .comfort-row .desc{ font-size:12px; color:var(--grey); }
+  .comfort-row input[type=checkbox]{ width:18px; height:18px; accent-color:var(--anthracite); }
+  .stepper{ display:flex; align-items:center; gap:10px; }
+  .stepper button{ width:26px; height:26px; border:1px solid var(--border); border-radius:4px; background:var(--white); font-size:15px; }
+  .stepper .count{ font-size:14px; font-weight:600; min-width:14px; text-align:center; }
+
+  /* price panel */
+  .price-panel{ border:1px solid var(--border); border-radius:8px; padding:20px; background:var(--surface); }
+  .client-toggle{ display:flex; gap:2px; background:var(--white); border:1px solid var(--border); border-radius:7px; padding:2px; margin-bottom:16px; }
+  .client-toggle button{ flex:1; border:none; background:transparent; padding:8px; font-size:12.5px; font-weight:600; border-radius:5px; color:var(--grey); }
+  .client-toggle button.active{ background:var(--anthracite); color:var(--white); }
+  .price-line{ display:flex; justify-content:space-between; font-size:13px; color:var(--grey); padding:5px 0; }
+  .price-line span:last-child{ color:var(--ink); font-variant-numeric:tabular-nums; }
+  .price-total-row{ display:flex; justify-content:space-between; align-items:baseline; margin-top:12px; padding-top:12px; border-top:1px solid var(--border); }
+  .price-total-row .amount{ font-size:26px; font-weight:700; }
+  .price-total-row .sub{ font-size:11.5px; color:var(--grey); display:block; text-align:right; margin-top:2px; }
+  .add-cart{ width:100%; background:var(--anthracite); color:var(--white); border:none; padding:15px; border-radius:6px; font-weight:600; font-size:14.5px; margin-top:16px; }
+  .add-cart:hover{ background:var(--anthracite-hover); }
+  .delivery-note{ font-size:12px; color:var(--grey); margin-top:10px; text-align:center; }
+
+  /* ---------- PROMISE STRIP ---------- */
+  .promise{ border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:30px 0; }
+  .promise-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:20px; text-align:center; }
+  @media (max-width:800px){ .promise-grid{ grid-template-columns:repeat(2,1fr); } }
+  .promise-item .t{ font-size:13.5px; font-weight:600; margin-bottom:4px; }
+  .promise-item .d{ font-size:12px; color:var(--grey); }
+
+  /* ---------- TABS ---------- */
+  .tabs-section{ padding:56px 0 80px; }
+  .tabs-nav{ display:flex; gap:0; border-bottom:1px solid var(--border); overflow-x:auto; margin-bottom:32px; }
+  .tab-btn{
+    background:none; border:none; padding:14px 20px; font-size:14px; font-weight:500; color:var(--grey);
+    border-bottom:2px solid transparent; white-space:nowrap;
+  }
+  .tab-btn.active{ color:var(--ink); border-color:var(--anthracite); font-weight:600; }
+  .tab-panel{ display:none; max-width:760px; }
+  .tab-panel.active{ display:block; }
+  .tab-panel h3{ font-size:19px; margin:20px 0 10px; }
+  .tab-panel h3:first-child{ margin-top:0; }
+  .tab-panel p{ font-size:14.5px; color:#3C3E3A; margin-bottom:12px; }
+  .tab-panel ul{ margin:0 0 16px 20px; font-size:14.5px; color:#3C3E3A; }
+  .tab-panel li{ margin-bottom:6px; }
+  .spec-table{ width:100%; border-collapse:collapse; font-size:13.5px; margin-bottom:10px; }
+  .spec-table td{ padding:10px 12px; border-bottom:1px solid var(--border); }
+  .spec-table td:first-child{ color:var(--grey); width:45%; }
+  .spec-note{ font-size:12px; color:var(--grey); font-style:italic; }
+
+  footer{ border-top:1px solid var(--border); padding:32px 0; font-size:13px; color:var(--grey); text-align:center; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">B&amp;B Pergolas</div>
+    <nav class="main-nav">
+      <a href="accueil.html">Accueil</a>
+      <a href="#">Pergolas</a>
+      <a href="#">Carports</a>
+      <a href="#">Réalisations</a>
+    </nav>
+    <div class="header-right">
+      <a href="tel:0615367504">06 15 36 75 04</a>
+      <div class="cart-icon"></div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="breadcrumb"><a href="accueil.html">Accueil</a> / <a href="#">Pergolas</a> / <span>Pergola Bioclimatique</span></div>
+
+  <div class="pdp">
+    <div>
+      <div class="gallery-main"><img id="mainImg" src="pergola-bioclimatique-cocoon-xl-mixte-gris-anthracite-blanc-700x4987m.webp" alt="Pergola bioclimatique B&amp;B Pergolas à lames orientables motorisées"></div>
+      <div class="gallery-thumbs" id="thumbs"></div>
+    </div>
+
+    <div class="config-col">
+      <h1>Pergola Bioclimatique</h1>
+      <p class="tagline">Toit à lames orientables motorisées — aluminium 100% français, sans entretien.</p>
+
+      <div class="trust-row">
+        <span><span class="dot"></span>Garantie jusqu'à 20 ans</span>
+        <span><span class="dot"></span>Livraison en France</span>
+        <span><span class="dot"></span>Conseil gratuit avant achat</span>
+      </div>
+
+      <div class="option-block">
+        <div class="option-label">Couleur <span class="sel" id="colorLabel"></span></div>
+        <div class="swatches" id="colorSwatches"></div>
+      </div>
+
+      <div class="option-block">
+        <div class="option-label">Dimensions <span class="sel" id="sizeLabel"></span></div>
+        <div class="size-grid" id="sizeGrid"></div>
+      </div>
+
+      <div class="option-block">
+        <div class="option-label">Type de construction</div>
+        <div class="install-toggle" id="installToggle">
+          <button class="install-card active" data-type="autoportee">
+            <svg viewBox="0 0 44 34"><rect x="2" y="6" width="40" height="4" fill="var(--anthracite)"/><rect x="2" y="6" width="4" height="26" fill="var(--anthracite)"/><rect x="38" y="6" width="4" height="26" fill="var(--anthracite)"/><rect x="2" y="28" width="4" height="4" fill="var(--anthracite)"/><rect x="38" y="28" width="4" height="4" fill="var(--anthracite)"/></svg>
+            <span>Autoportée</span>
+          </button>
+          <button class="install-card" data-type="adossee">
+            <svg viewBox="0 0 44 34"><rect x="2" y="2" width="40" height="4" fill="var(--grey)"/><rect x="2" y="10" width="40" height="4" fill="var(--anthracite)"/><rect x="2" y="10" width="4" height="22" fill="var(--anthracite)"/><rect x="38" y="10" width="4" height="22" fill="var(--anthracite)"/></svg>
+            <span>Adossée</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="option-block">
+        <div class="option-label">Stores latéraux <span class="sel" id="storesLabel">aucun</span></div>
+        <div class="side-diagram-wrap">
+          <div class="side-diagram">
+            <svg viewBox="0 0 200 160">
+              <rect class="zone" data-side="haut" x="40" y="24" width="120" height="16"/>
+              <rect class="zone" data-side="bas" x="40" y="120" width="120" height="16"/>
+              <rect class="zone" data-side="gauche" x="24" y="40" width="16" height="80"/>
+              <rect class="zone" data-side="droite" x="160" y="40" width="16" height="80"/>
+              <rect x="40" y="40" width="120" height="80" fill="none" stroke="var(--ink)" stroke-width="2"/>
+              <line x1="40" y1="40" x2="160" y2="120" stroke="var(--border)" stroke-width="1"/>
+              <line x1="160" y1="40" x2="40" y2="120" stroke="var(--border)" stroke-width="1"/>
+            </svg>
+          </div>
+          <div class="side-hint">Cliquez un côté pour ajouter un store vertical à cet emplacement</div>
+        </div>
+      </div>
+
+      <div class="option-block">
+        <div class="option-label">Confort</div>
+        <div id="comfortOptions">
+          <div class="comfort-row">
+            <div>
+              <div class="name">Éclairage LED intégré</div>
+              <div class="desc">Bandeau dimmable dans les lames</div>
+            </div>
+            <input type="checkbox" id="optLed">
+          </div>
+          <div class="comfort-row">
+            <div>
+              <div class="name">Motorisation des lames</div>
+              <div class="desc">Télécommande + pilotage appli</div>
+            </div>
+            <input type="checkbox" id="optMotor">
+          </div>
+          <div class="comfort-row">
+            <div>
+              <div class="name">Lampe chauffante</div>
+              <div class="desc">249 € HT / unité</div>
+            </div>
+            <div class="stepper">
+              <button id="heaterMinus">−</button>
+              <span class="count" id="heaterCount">0</span>
+              <button id="heaterPlus">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="price-panel">
+        <div class="client-toggle">
+          <button class="active" data-client="particulier">Particulier</button>
+          <button data-client="professionnel">Professionnel</button>
+        </div>
+        <div id="priceLines"></div>
+        <div class="price-total-row">
+          <span id="totalLabel">Prix TTC</span>
+          <div style="text-align:right;">
+            <span class="amount" id="totalAmount">—</span>
+            <span class="sub" id="totalSub"></span>
+          </div>
+        </div>
+        <button class="add-cart">Ajouter au panier</button>
+        <div class="delivery-note">Livraison estimée sous 3 à 6 semaines selon configuration</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="promise">
+  <div class="container promise-grid">
+    <div class="promise-item"><div class="t">Prix transparent</div><div class="d">Aucun coût caché, tout est inclus dans le total affiché</div></div>
+    <div class="promise-item"><div class="t">Jusqu'à 20 ans de garantie</div><div class="d">Selon les composants de votre configuration</div></div>
+    <div class="promise-item"><div class="t">Fabrication française</div><div class="d">Aluminium usiné et assemblé en France</div></div>
+    <div class="promise-item"><div class="t">Conseil avant achat</div><div class="d">Un artisan répond à vos questions techniques</div></div>
+  </div>
+</div>
+
+<div class="container tabs-section">
+  <div class="tabs-nav" id="tabsNav">
+    <button class="tab-btn active" data-tab="description">Description</button>
+    <button class="tab-btn" data-tab="specs">Informations techniques</button>
+    <button class="tab-btn" data-tab="livraison">Livraison</button>
+    <button class="tab-btn" data-tab="montage">Montage</button>
+    <button class="tab-btn" data-tab="permis">Permis de construire &amp; Réglementation</button>
+    <button class="tab-btn" data-tab="garantie">Garantie</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-description">
+    <h3>Une pergola qui s'adapte au temps qu'il fait</h3>
+    <p>La pergola bioclimatique B&amp;B Pergolas repose sur des lames en aluminium orientables jusqu'à 120°, pour doser précisément l'ombre, la lumière et la ventilation de votre terrasse tout au long de la journée.</p>
+    <p>Elle convient particulièrement à :</p>
+    <ul>
+      <li>Ceux qui veulent profiter de leur terrasse même en cas de pluie légère, lames fermées</li>
+      <li>Ceux qui recherchent une structure sans entretien, résistante aux UV et à la corrosion</li>
+      <li>Ceux qui veulent piloter leur confort extérieur (ombre, lumière, éclairage) au fil des saisons</li>
+    </ul>
+    <p>Chaque structure est fabriquée à vos dimensions exactes, avec une évacuation d'eau intégrée aux poteaux et une gouttière discrète qui protège votre mobilier de jardin.</p>
+  </div>
+
+  <div class="tab-panel" id="tab-specs">
+    <h3>Caractéristiques techniques</h3>
+    <table class="spec-table">
+      <tr><td>Matériau</td><td>Aluminium 100% recyclable, thermolaquage double couche</td></tr>
+      <tr><td>Rotation des lames</td><td>0° à 120°, motorisée ou manuelle selon option</td></tr>
+      <tr><td>Hauteur de passage recommandée</td><td>2,35 m minimum</td></tr>
+      <tr><td>Portée libre max sans poteau central</td><td>~5 m (au-delà : poteau de jonction ou sur-mesure renforcé)</td></tr>
+      <tr><td>Drainage</td><td>Gouttières intégrées, évacuation par les poteaux</td></tr>
+      <tr><td>Résistance</td><td>Traitée contre corrosion, UV et déformation</td></tr>
+      <tr><td>Finitions disponibles</td><td>Anthracite (RAL 7016), Blanc, Noir, Bicolore anthracite/blanc</td></tr>
+    </table>
+    <p class="spec-note">Caractéristiques indicatives — les valeurs exactes (résistance au vent, charge de neige) dépendent de la configuration finale et sont confirmées avant commande.</p>
+  </div>
+
+  <div class="tab-panel" id="tab-livraison">
+    <h3>Livraison en France</h3>
+    <p>Votre pergola est fabriquée sur mesure puis livrée en kit, sur palette, directement chez vous en France métropolitaine.</p>
+    <ul>
+      <li>Délai indicatif : 3 à 6 semaines pour une taille standard, jusqu'à 8 semaines pour une configuration hors gabarit</li>
+      <li>Transporteur avec prise de rendez-vous préalable</li>
+      <li>Les vitrages et parois, s'ils sont commandés, peuvent être livrés séparément</li>
+    </ul>
+  </div>
+
+  <div class="tab-panel" id="tab-montage">
+    <h3>Montage</h3>
+    <p>Chaque pergola est livrée avec sa notice de montage détaillée. Deux options s'offrent à vous :</p>
+    <ul>
+      <li><strong>Montage par vos soins</strong> — comptez une demi-journée à une journée à deux personnes, avec un outillage standard (perceuse, niveau, clé à douille)</li>
+      <li><strong>Pose par un artisan partenaire</strong> — sur devis séparé, pour une installation clé en main</li>
+    </ul>
+  </div>
+
+  <div class="tab-panel" id="tab-permis">
+    <h3>Permis de construire &amp; réglementation</h3>
+    <p>En France, les règles applicables dépendent de la surface couverte :</p>
+    <ul>
+      <li><strong>Moins de 20 m²</strong> : une déclaration préalable de travaux suffit généralement</li>
+      <li><strong>Plus de 20 m²</strong> : un permis de construire est requis</li>
+    </ul>
+    <p class="spec-note">Les règles locales (PLU) peuvent varier d'une commune à l'autre — vérifiez toujours auprès de votre mairie avant de valider votre projet.</p>
+  </div>
+
+  <div class="tab-panel" id="tab-garantie">
+    <h3>Notre garantie</h3>
+    <p>Nous garantissons la qualité de fabrication de chaque structure :</p>
+    <ul>
+      <li><strong>Structure aluminium</strong> — jusqu'à 20 ans selon le produit</li>
+      <li><strong>Pièces mécaniques</strong> (lames, mécanismes) — 5 ans</li>
+      <li><strong>Composants électroniques</strong> (LED, motorisation) — 2 ans</li>
+    </ul>
+    <p>En cas de besoin, notre équipe reste à votre disposition pour trouver la solution adaptée.</p>
+  </div>
+</div>
+
+<footer>© 2026 B&amp;B Pergolas — Cernay, Haut-Rhin — Prototype de fiche produit</footer>
+
+<script>
+/* ---------- données produit ---------- */
+const PRODUCT = {
+  nom: 'Pergola Bioclimatique',
+  forfaitBaseHT: 450,
+  prixM2HT: 220,
+  tauxTVA: 0.20,
+  tailles: [
+    { l:3, p:3 }, { l:3, p:4 }, { l:3, p:5 }, { l:3, p:6 },
+    { l:4, p:4 }, { l:4, p:5 }, { l:4, p:6 },
+  ],
+  couleurs: [
+    { id:'anthracite', nom:'Anthracite RAL 7016', hex:'#2B2E2C', pct:0 },
+    { id:'blanc', nom:'Blanc', hex:'#FFFFFF', pct:0 },
+    { id:'noir', nom:'Noir', hex:'#111111', pct:3 },
+    { id:'bicolore', nom:'Bicolore anthracite / blanc', hex:null, pct:5 },
+  ],
+  storeParMetreHT: 95,
+  ledForfaitHT: 180,
+  motorForfaitHT: 650,
+  lampeChauffanteHT: 249,
+  installations: {
+    autoportee: { pct: 0 },
+    adossee: { pct: -6 }, // moins de poteaux
+  },
+  images: [
+    'pergola-bioclimatique-cocoon-xl-mixte-gris-anthracite-blanc-700x4987m.webp',
+    'https://bbpergolas.com/wp-content/uploads/2026/01/l-jour.jpeg.webp',
+    'https://bbpergolas.com/wp-content/uploads/2026/01/l-nuit.jpeg.webp',
+    'https://bbpergolas.com/wp-content/uploads/2026/01/VX-TR.jpeg.webp',
+  ],
+};
+
+let state = {
+  tailleIdx: 3, // 3x6 par défaut
+  couleurId: 'anthracite',
+  installation: 'autoportee',
+  sides: { haut:false, bas:false, gauche:false, droite:false },
+  optLed:false, optMotor:false, heaterQty:0,
+  typeClient:'particulier',
+};
+
+const el = id => document.getElementById(id);
+
+/* ---------- galerie ---------- */
+const thumbsBox = el('thumbs');
+PRODUCT.images.forEach((src,i)=>{
+  const img = document.createElement('img');
+  img.src = src;
+  if(i===0) img.classList.add('active');
+  img.addEventListener('click', ()=>{
+    el('mainImg').src = src;
+    thumbsBox.querySelectorAll('img').forEach(t=>t.classList.remove('active'));
+    img.classList.add('active');
+  });
+  thumbsBox.appendChild(img);
+});
+
+/* ---------- couleurs ---------- */
+const colorBox = el('colorSwatches');
+PRODUCT.couleurs.forEach(c=>{
+  const sw = document.createElement('div');
+  sw.className = 'swatch' + (c.id==='anthracite' ? ' active' : '') + (c.id==='bicolore' ? ' bicolore' : '');
+  if(c.hex) sw.style.background = c.hex;
+  if(c.hex === '#FFFFFF') sw.style.boxShadow = '0 0 0 1px var(--border), inset 0 0 0 1px var(--border)';
+  sw.title = c.nom;
+  sw.addEventListener('click', ()=>{
+    colorBox.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+    sw.classList.add('active');
+    state.couleurId = c.id;
+    update();
+  });
+  colorBox.appendChild(sw);
+});
+
+/* ---------- tailles ---------- */
+const sizeBox = el('sizeGrid');
+PRODUCT.tailles.forEach((t,i)=>{
+  const btn = document.createElement('button');
+  btn.className = 'size-pill' + (i===state.tailleIdx ? ' active' : '');
+  btn.textContent = `${t.l}x${t.p}m`;
+  btn.addEventListener('click', ()=>{
+    sizeBox.querySelectorAll('.size-pill').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.tailleIdx = i;
+    update();
+  });
+  sizeBox.appendChild(btn);
+});
+
+/* ---------- installation ---------- */
+document.querySelectorAll('.install-card').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.install-card').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.installation = btn.dataset.type;
+    // le côté "haut" représente le mur en adossée : non disponible pour un store
+    const hautZone = document.querySelector('.zone[data-side="haut"]');
+    if(state.installation === 'adossee'){
+      state.sides.haut = false;
+      hautZone.classList.add('disabled');
+      hautZone.classList.remove('active');
+    } else {
+      hautZone.classList.remove('disabled');
+    }
+    update();
+  });
+});
+
+/* ---------- stores latéraux ---------- */
+document.querySelectorAll('.zone').forEach(zone=>{
+  zone.addEventListener('click', ()=>{
+    if(zone.classList.contains('disabled')) return;
+    const side = zone.dataset.side;
+    state.sides[side] = !state.sides[side];
+    zone.classList.toggle('active', state.sides[side]);
+    update();
+  });
+});
+
+/* ---------- confort ---------- */
+el('optLed').addEventListener('change', e=>{ state.optLed = e.target.checked; update(); });
+el('optMotor').addEventListener('change', e=>{ state.optMotor = e.target.checked; update(); });
+el('heaterPlus').addEventListener('click', ()=>{ state.heaterQty = Math.min(4, state.heaterQty+1); el('heaterCount').textContent = state.heaterQty; update(); });
+el('heaterMinus').addEventListener('click', ()=>{ state.heaterQty = Math.max(0, state.heaterQty-1); el('heaterCount').textContent = state.heaterQty; update(); });
+
+/* ---------- type client ---------- */
+document.querySelectorAll('.client-toggle button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.client-toggle button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.typeClient = btn.dataset.client;
+    update();
+  });
+});
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    el('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ---------- moteur de prix ---------- */
+function fmt(n){ return n.toLocaleString('fr-FR', {maximumFractionDigits:0}) + ' €'; }
+
+function update(){
+  const taille = PRODUCT.tailles[state.tailleIdx];
+  const surfaceM2 = taille.l * taille.p;
+  const couleur = PRODUCT.couleurs.find(c => c.id === state.couleurId);
+
+  el('colorLabel').textContent = '— ' + couleur.nom;
+  el('sizeLabel').textContent = `— ${taille.l}x${taille.p} m (${surfaceM2} m²)`;
+
+  const activeSides = Object.keys(state.sides).filter(s => state.sides[s]);
+  el('storesLabel').textContent = activeSides.length ? `${activeSides.length} côté(s)` : 'aucun';
+
+  const lignes = [];
+  lignes.push({ libelle:'Forfait de base', montant: PRODUCT.forfaitBaseHT });
+
+  const prixStructureBrut = surfaceM2 * PRODUCT.prixM2HT;
+  const installDelta = PRODUCT.installations[state.installation].pct;
+  const prixStructure = prixStructureBrut * (1 + installDelta/100);
+  lignes.push({ libelle:`Structure ${taille.l}x${taille.p}m${installDelta ? ' (adossée, -' + Math.abs(installDelta) + '%)' : ''}`, montant: prixStructure });
+
+  let total = PRODUCT.forfaitBaseHT + prixStructure;
+
+  if(couleur.pct > 0){
+    const surcharge = prixStructure * (couleur.pct/100);
+    lignes.push({ libelle:`Coloris ${couleur.nom}`, montant: surcharge });
+    total += surcharge;
+  }
+
+  activeSides.forEach(side=>{
+    const longueur = (side === 'haut' || side === 'bas') ? taille.l : taille.p;
+    const montant = longueur * PRODUCT.storeParMetreHT;
+    lignes.push({ libelle:`Store latéral — côté ${side} (${longueur} m)`, montant });
+    total += montant;
+  });
+
+  if(state.optLed){ lignes.push({ libelle:'Éclairage LED intégré', montant: PRODUCT.ledForfaitHT }); total += PRODUCT.ledForfaitHT; }
+  if(state.optMotor){ lignes.push({ libelle:'Motorisation des lames', montant: PRODUCT.motorForfaitHT }); total += PRODUCT.motorForfaitHT; }
+  if(state.heaterQty > 0){
+    const montant = state.heaterQty * PRODUCT.lampeChauffanteHT;
+    lignes.push({ libelle:`Lampe(s) chauffante(s) x${state.heaterQty}`, montant });
+    total += montant;
+  }
+
+  const totalTTC = total * (1 + PRODUCT.tauxTVA);
+
+  el('priceLines').innerHTML = lignes.map(l => `<div class="price-line"><span>${l.libelle}</span><span>${fmt(l.montant)}</span></div>`).join('');
+
+  const htFirst = state.typeClient === 'professionnel';
+  el('totalLabel').textContent = htFirst ? 'Prix HT' : 'Prix TTC';
+  el('totalAmount').textContent = fmt(htFirst ? total : totalTTC);
+  el('totalSub').textContent = htFirst ? `soit ${fmt(totalTTC)} TTC` : `soit ${fmt(total)} HT`;
+}
+
+update();
+</script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Configurateur — Catalogue produits</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sand: #EDE9DD;
+    --sand-line: #D9D3C2;
+    --charcoal: #21281F;
+    --rust: #B5551F;
+    --rust-light: #D98B5A;
+    --alu: #9A9E92;
+    --wood: #6B4B34;
+    --white: #FBFAF6;
+    --danger: #A6402F;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--sand); color:var(--charcoal); font-family:'Work Sans', sans-serif; -webkit-font-smoothing:antialiased; }
+  h1,.serif{ font-family:'Fraunces', serif; }
+
+  .wrap{ display:grid; grid-template-columns: 1.15fr 0.85fr; min-height:100vh; }
+  @media (max-width: 900px){ .wrap{ grid-template-columns: 1fr; } }
+
+  .config{ padding: 44px 56px 64px; }
+  .brand{ font-size:14px; color:var(--wood); margin-bottom:6px; }
+
+  .product-select{ margin-bottom:28px; }
+  .product-select select{
+    width:100%; padding:14px 16px; font:500 16px 'Work Sans';
+    border:1px solid var(--sand-line); border-radius:10px; background:var(--white);
+    color:var(--charcoal); cursor:pointer;
+  }
+
+  h1{ font-size:clamp(26px,3.2vw,36px); font-weight:500; line-height:1.1; margin:0 0 8px; }
+  .product-desc{ color:var(--wood); font-size:15px; margin:0 0 30px; max-width:44ch; }
+
+  .client-toggle{ display:flex; gap:2px; background:var(--sand-line); border-radius:10px; padding:3px; width:fit-content; margin-bottom:36px; }
+  .client-toggle button{ border:none; background:transparent; padding:9px 18px; font:500 14px 'Work Sans'; color:var(--charcoal); opacity:0.55; border-radius:8px; cursor:pointer; }
+  .client-toggle button.active{ background:var(--white); opacity:1; box-shadow: 0 1px 2px rgba(33,40,31,0.12); }
+
+  .field{ margin-bottom:28px; }
+  .field-label{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
+  .field-label span:first-child{ font-size:13px; text-transform:uppercase; letter-spacing:0.08em; color:var(--wood); }
+  .field-label span.val{ font-family:'Fraunces'; font-size:20px; }
+  input[type=range]{ -webkit-appearance:none; width:100%; height:3px; background:var(--sand-line); border-radius:2px; outline:none; }
+  input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--rust); border:3px solid var(--white); box-shadow:0 0 0 1px var(--rust); cursor:pointer; margin-top:-8px; }
+  .range-bounds{ display:flex; justify-content:space-between; font-size:12px; color:var(--alu); margin-top:6px; }
+  .field-warning{ font-size:12px; color:var(--danger); margin-top:8px; display:none; }
+  .field-warning.show{ display:block; }
+
+  .section-title{ font-size:13px; text-transform:uppercase; letter-spacing:0.08em; color:var(--wood); margin: 36px 0 16px; }
+
+  .pill-select{ display:flex; flex-wrap:wrap; gap:8px; }
+  .pill-select button{ border:1px solid var(--sand-line); background:var(--white); padding:10px 16px; font:500 14px 'Work Sans'; border-radius:8px; cursor:pointer; color:var(--charcoal); }
+  .pill-select button.active{ border-color:var(--rust); background:rgba(181,85,31,0.08); color:var(--rust); }
+  .pill-select button .sub{ display:block; font-size:11px; opacity:0.6; font-weight:400; }
+
+  .options{ display:flex; flex-direction:column; gap:10px; }
+  .opt-row{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--white); border:1px solid var(--sand-line); border-radius:10px; }
+  .opt-row label{ display:flex; align-items:center; gap:12px; font-size:15px; cursor:pointer; }
+  .opt-row .price-tag{ font-size:13px; color:var(--alu); font-variant-numeric: tabular-nums; }
+  .opt-row input[type=checkbox]{ width:18px; height:18px; accent-color:var(--rust); }
+
+  .stage{ background:var(--charcoal); color:var(--white); padding:44px; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; }
+  .price-box{ margin-top:auto; }
+  .price-line{ display:flex; justify-content:space-between; font-size:14px; padding:7px 0; color:rgba(251,250,246,0.7); }
+  .price-line span:last-child{ font-variant-numeric: tabular-nums; color:var(--white); }
+  .price-line.secondary{ font-size:12px; opacity:0.55; padding-top:0; }
+  .price-total{ display:flex; justify-content:space-between; align-items:baseline; margin-top:18px; padding-top:18px; border-top:1px solid rgba(255,255,255,0.12); }
+  .price-total .label{ font-size:14px; color:rgba(251,250,246,0.7); }
+  .price-total .amount{ font-family:'Fraunces'; font-style:italic; font-size:38px; color:var(--rust-light); font-variant-numeric: tabular-nums; }
+  .price-total .sub-amount{ font-size:13px; color:rgba(251,250,246,0.45); margin-top:4px; }
+  .error-box{ background:rgba(166,64,47,0.15); border:1px solid rgba(166,64,47,0.4); color:#E8A896; padding:14px 16px; border-radius:10px; font-size:14px; margin-top:16px; }
+  .cta{ margin-top:22px; width:100%; padding:16px; background:var(--rust); color:var(--white); border:none; border-radius:10px; font:500 15px 'Work Sans'; cursor:pointer; }
+  .cta:disabled{ opacity:0.4; cursor:not-allowed; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="config">
+    <div class="brand">ATELIER OMBRAGE — CATALOGUE</div>
+
+    <div class="product-select">
+      <select id="productSelect"></select>
+    </div>
+
+    <h1 id="productName"></h1>
+    <p class="product-desc" id="productDesc"></p>
+
+    <div class="client-toggle">
+      <button class="active" data-client="particulier">Particulier</button>
+      <button data-client="professionnel">Professionnel</button>
+    </div>
+
+    <div class="field">
+      <div class="field-label"><span>Largeur</span><span class="val"><span id="widthVal"></span> cm</span></div>
+      <input type="range" id="width">
+      <div class="range-bounds"><span id="widthMin"></span><span id="widthMax"></span></div>
+    </div>
+
+    <div class="field">
+      <div class="field-label"><span>Profondeur</span><span class="val"><span id="depthVal"></span> cm</span></div>
+      <input type="range" id="depth">
+      <div class="range-bounds"><span id="depthMin"></span><span id="depthMax"></span></div>
+      <div class="field-warning" id="surfaceWarning"></div>
+    </div>
+
+    <div class="section-title">Matériau</div>
+    <div class="pill-select" id="materialSelect"></div>
+
+    <div class="section-title">Options</div>
+    <div class="options" id="optionsList"></div>
+  </div>
+
+  <div class="stage">
+    <div class="price-box">
+      <div id="priceLines"></div>
+      <div id="errorBox"></div>
+      <div class="price-total">
+        <span class="label" id="priceTotalLabel">Prix TTC</span>
+        <div style="text-align:right;">
+          <div class="amount" id="priceTotal">—</div>
+          <div class="sub-amount" id="priceSub"></div>
+        </div>
+      </div>
+      <button class="cta" id="ctaBtn">Ajouter au panier</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+   CATALOGUE — reflète la structure définie dans catalogue-types.ts
+   Ajouter un produit ici suffit : la page s'adapte automatiquement.
+   ========================================================== */
+const CATALOGUE = [
+  {
+    id: 'pergola-eclipse',
+    categorie: 'pergola',
+    nom: 'Pergola bioclimatique Eclipse',
+    description: 'Lames orientables, structure autoportante, idéale terrasse.',
+    materiaux: [
+      { id: 'alu', nom: 'Aluminium', description: 'léger, sans entretien', prixParM2HT: 220 },
+    ],
+    contraintesDimensions: { largeurMinCm: 200, largeurMaxCm: 800, profondeurMinCm: 200, profondeurMaxCm: 700, surfaceMaxM2: 45 },
+    options: [
+      { id: 'led', nom: 'Éclairage LED intégré', description: 'bandeau dimmable', typeCalcul: 'forfait', valeurHT: 180 },
+      { id: 'motor', nom: 'Motorisation des lames', description: 'télécommande + appli', typeCalcul: 'forfait', valeurHT: 650 },
+      { id: 'store', nom: 'Store latéral enroulable', description: 'protection solaire', typeCalcul: 'parM2', valeurHT: 35 },
+    ],
+    tauxTVA: 0.20,
+    forfaitBaseHT: 450,
+  },
+  {
+    id: 'pergola-adossee-brise',
+    categorie: 'pergola',
+    nom: 'Pergola adossée Brise',
+    description: 'Modèle compact adossé au mur, montage simplifié.',
+    materiaux: [
+      { id: 'alu', nom: 'Aluminium', description: 'léger, sans entretien', prixParM2HT: 195 },
+    ],
+    contraintesDimensions: { largeurMinCm: 150, largeurMaxCm: 500, profondeurMinCm: 150, profondeurMaxCm: 350 },
+    options: [
+      { id: 'led', nom: 'Éclairage LED intégré', description: 'bandeau dimmable', typeCalcul: 'forfait', valeurHT: 150 },
+      { id: 'toile', nom: 'Toile brise-vue', description: 'coulissante sur rail', typeCalcul: 'parM2', valeurHT: 28 },
+    ],
+    tauxTVA: 0.20,
+    forfaitBaseHT: 320,
+  },
+  {
+    id: 'veranda-panorama',
+    categorie: 'veranda',
+    nom: 'Véranda Panorama',
+    description: 'Grandes surfaces vitrées, structure aluminium.',
+    materiaux: [
+      { id: 'alu', nom: 'Aluminium', description: 'structure fine, vitrage double', prixParM2HT: 950 },
+    ],
+    contraintesDimensions: { largeurMinCm: 250, largeurMaxCm: 700, profondeurMinCm: 250, profondeurMaxCm: 500 },
+    options: [
+      { id: 'triple', nom: 'Vitrage triple', description: 'isolation renforcée', typeCalcul: 'pourcentageStructure', valeurHT: 12 },
+      { id: 'porte', nom: 'Porte coulissante galandage', description: 'ouverture totale', typeCalcul: 'forfait', valeurHT: 850 },
+    ],
+    tauxTVA: 0.20,
+    forfaitBaseHT: 900,
+  },
+];
+
+/* ==========================================================
+   MOTEUR DE PRIX — identique à calculerPrix() dans catalogue-types.ts
+   En production : cette même fonction tourne côté serveur avant paiement.
+   ========================================================== */
+function calculerPrix(produit, config) {
+  const materiau = produit.materiaux.find(m => m.id === config.materiauId);
+  if (!materiau) throw new Error('Matériau invalide pour ce produit.');
+
+  const { largeurMinCm, largeurMaxCm, profondeurMinCm, profondeurMaxCm, surfaceMaxM2 } = produit.contraintesDimensions;
+  if (config.largeurCm < largeurMinCm || config.largeurCm > largeurMaxCm) throw new Error('Largeur hors limites.');
+  if (config.profondeurCm < profondeurMinCm || config.profondeurCm > profondeurMaxCm) throw new Error('Profondeur hors limites.');
+
+  const surfaceM2 = (config.largeurCm / 100) * (config.profondeurCm / 100);
+  if (surfaceMaxM2 && surfaceM2 > surfaceMaxM2) {
+    throw new Error(`Surface (${surfaceM2.toFixed(1)} m²) supérieure au maximum autorisé (${surfaceMaxM2} m²) pour ce produit.`);
+  }
+
+  const lignes = [];
+  lignes.push({ libelle: 'Forfait de base', montantHT: produit.forfaitBaseHT });
+  const prixStructure = surfaceM2 * materiau.prixParM2HT;
+  lignes.push({ libelle: `Structure ${materiau.nom} — ${surfaceM2.toFixed(2)} m²`, montantHT: prixStructure });
+
+  let totalHT = produit.forfaitBaseHT + prixStructure;
+
+  for (const optionId of config.optionsChoisies) {
+    const option = produit.options.find(o => o.id === optionId);
+    if (!option) continue;
+    let montant = 0;
+    if (option.typeCalcul === 'forfait') montant = option.valeurHT;
+    if (option.typeCalcul === 'parM2') montant = option.valeurHT * surfaceM2;
+    if (option.typeCalcul === 'pourcentageStructure') montant = prixStructure * (option.valeurHT / 100);
+    lignes.push({ libelle: option.nom, montantHT: montant });
+    totalHT += montant;
+  }
+
+  return { lignes, totalHT, totalTTC: totalHT * (1 + produit.tauxTVA), tauxTVA: produit.tauxTVA, surfaceM2 };
+}
+
+/* ---------- état ---------- */
+let state = { produit: CATALOGUE[0], materiauId: CATALOGUE[0].materiaux[0].id, largeurCm: 0, profondeurCm: 0, options: {}, typeClient: 'particulier' };
+const el = id => document.getElementById(id);
+
+function initProduct(produit) {
+  state.produit = produit;
+  state.materiauId = produit.materiaux[0].id;
+  const c = produit.contraintesDimensions;
+  state.largeurCm = Math.round((c.largeurMinCm + c.largeurMaxCm) / 2);
+  state.profondeurCm = Math.round((c.profondeurMinCm + c.profondeurMaxCm) / 2);
+  state.options = {};
+  produit.options.forEach(o => state.options[o.id] = false);
+
+  el('productName').textContent = produit.nom;
+  el('productDesc').textContent = produit.description;
+
+  el('width').min = c.largeurMinCm; el('width').max = c.largeurMaxCm; el('width').value = state.largeurCm;
+  el('widthMin').textContent = c.largeurMinCm + ' cm'; el('widthMax').textContent = c.largeurMaxCm + ' cm';
+  el('depth').min = c.profondeurMinCm; el('depth').max = c.profondeurMaxCm; el('depth').value = state.profondeurCm;
+  el('depthMin').textContent = c.profondeurMinCm + ' cm'; el('depthMax').textContent = c.profondeurMaxCm + ' cm';
+
+  renderMaterials();
+  renderOptions();
+  update();
+}
+
+function renderMaterials() {
+  const box = el('materialSelect');
+  box.innerHTML = '';
+  state.produit.materiaux.forEach((m, i) => {
+    const btn = document.createElement('button');
+    if (i === 0) btn.classList.add('active');
+    btn.innerHTML = `${m.nom}<span class="sub">${m.description}</span>`;
+    btn.addEventListener('click', () => {
+      box.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.materiauId = m.id;
+      update();
+    });
+    box.appendChild(btn);
+  });
+}
+
+function renderOptions() {
+  const box = el('optionsList');
+  box.innerHTML = '';
+  state.produit.options.forEach(opt => {
+    const row = document.createElement('div');
+    row.className = 'opt-row';
+    let tag = opt.typeCalcul === 'forfait' ? `+${opt.valeurHT.toLocaleString('fr-FR')} € HT`
+             : opt.typeCalcul === 'parM2' ? `+${opt.valeurHT} € HT/m²`
+             : `+${opt.valeurHT}%`;
+    row.innerHTML = `
+      <label><input type="checkbox" data-opt="${opt.id}">
+        <span>${opt.nom}<br><span style="font-size:12px;color:var(--alu);font-weight:400;">${opt.description}</span></span>
+      </label>
+      <span class="price-tag">${tag}</span>`;
+    box.appendChild(row);
+  });
+  box.querySelectorAll('input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', e => { state.options[e.target.dataset.opt] = e.target.checked; update(); });
+  });
+}
+
+function fmt(n){ return n.toLocaleString('fr-FR', {maximumFractionDigits:0}) + ' €'; }
+
+function update() {
+  const config = {
+    produitId: state.produit.id,
+    materiauId: state.materiauId,
+    largeurCm: state.largeurCm,
+    profondeurCm: state.profondeurCm,
+    optionsChoisies: Object.keys(state.options).filter(k => state.options[k]),
+    typeClient: state.typeClient,
+  };
+
+  el('errorBox').innerHTML = '';
+  el('surfaceWarning').classList.remove('show');
+  el('ctaBtn').disabled = false;
+
+  try {
+    const res = calculerPrix(state.produit, config);
+
+    el('priceLines').innerHTML = res.lignes.map(l => `<div class="price-line"><span>${l.libelle}</span><span>${fmt(l.montantHT)}</span></div>`).join('');
+
+    const htFirst = state.typeClient === 'professionnel';
+    el('priceTotalLabel').textContent = htFirst ? 'Prix HT' : 'Prix TTC';
+    el('priceTotal').textContent = fmt(htFirst ? res.totalHT : res.totalTTC);
+    el('priceSub').textContent = htFirst
+      ? `soit ${fmt(res.totalTTC)} TTC (TVA ${(res.tauxTVA*100).toFixed(0)}%)`
+      : `soit ${fmt(res.totalHT)} HT (TVA ${(res.tauxTVA*100).toFixed(0)}%)`;
+  } catch (e) {
+    el('priceLines').innerHTML = '';
+    el('priceTotal').textContent = '—';
+    el('priceSub').textContent = '';
+    el('errorBox').innerHTML = `<div class="error-box">${e.message}</div>`;
+    el('ctaBtn').disabled = true;
+    if (state.produit.contraintesDimensions.surfaceMaxM2) el('surfaceWarning').classList.add('show');
+  }
+}
+
+/* ---------- init sélecteur produit ---------- */
+const select = el('productSelect');
+CATALOGUE.forEach(p => {
+  const opt = document.createElement('option');
+  opt.value = p.id; opt.textContent = `${p.nom} (${p.categorie})`;
+  select.appendChild(opt);
+});
+select.addEventListener('change', () => initProduct(CATALOGUE.find(p => p.id === select.value)));
+
+el('width').addEventListener('input', e => { state.largeurCm = parseInt(e.target.value); el('widthVal').textContent = state.largeurCm; update(); });
+el('depth').addEventListener('input', e => { state.profondeurCm = parseInt(e.target.value); el('depthVal').textContent = state.profondeurCm; update(); });
+
+document.querySelectorAll('.client-toggle button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.client-toggle button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.typeClient = btn.dataset.client;
+    update();
+  });
+});
+
+/* ---------- démarrage ---------- */
+initProduct(CATALOGUE[0]);
+el('widthVal').textContent = state.largeurCm;
+el('depthVal').textContent = state.profondeurCm;
+</script>
+</body>
+</html>

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Configurateur — Pergolas & Vérandas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sand: #EDE9DD;
+    --sand-line: #D9D3C2;
+    --charcoal: #21281F;
+    --charcoal-2: #2B3327;
+    --rust: #B5551F;
+    --rust-light: #D98B5A;
+    --alu: #9A9E92;
+    --wood: #6B4B34;
+    --white: #FBFAF6;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--sand);
+    color:var(--charcoal);
+    font-family:'Work Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.serif{ font-family:'Fraunces', serif; }
+
+  .wrap{
+    display:grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    min-height:100vh;
+  }
+  @media (max-width: 900px){
+    .wrap{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------- LEFT: configurator ---------- */
+  .config{
+    padding: 48px 56px 64px;
+  }
+  .brand{
+    font-size:14px;
+    letter-spacing:0.02em;
+    color:var(--wood);
+    margin-bottom:6px;
+  }
+  h1{
+    font-size:clamp(28px,3.4vw,40px);
+    font-weight:500;
+    line-height:1.08;
+    margin:0 0 28px;
+    max-width:14ch;
+  }
+  h1 em{ font-style:italic; color:var(--rust); }
+
+  .toggle{
+    display:flex;
+    gap:2px;
+    background:var(--sand-line);
+    border-radius:10px;
+    padding:3px;
+    width:fit-content;
+    margin-bottom:36px;
+  }
+  .toggle button{
+    border:none;
+    background:transparent;
+    padding:10px 22px;
+    font:500 15px 'Work Sans';
+    color:var(--charcoal);
+    opacity:0.55;
+    border-radius:8px;
+    cursor:pointer;
+    transition: all .2s ease;
+  }
+  .toggle button.active{
+    background:var(--white);
+    opacity:1;
+    box-shadow: 0 1px 2px rgba(33,40,31,0.12);
+  }
+
+  .field{ margin-bottom:30px; }
+  .field-label{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:10px;
+  }
+  .field-label span:first-child{
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--wood);
+  }
+  .field-label span.val{
+    font-family:'Fraunces';
+    font-size:20px;
+    color:var(--charcoal);
+  }
+  input[type=range]{
+    -webkit-appearance:none;
+    width:100%;
+    height:3px;
+    background:var(--sand-line);
+    border-radius:2px;
+    outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:18px; height:18px;
+    border-radius:50%;
+    background:var(--rust);
+    border:3px solid var(--white);
+    box-shadow:0 0 0 1px var(--rust);
+    cursor:pointer;
+    margin-top:-8px;
+  }
+  input[type=range]::-webkit-slider-runnable-track{
+    height:3px;
+    background:var(--sand-line);
+    border-radius:2px;
+  }
+  .range-bounds{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    color:var(--alu);
+    margin-top:6px;
+  }
+
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+  .pill-select{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .pill-select button{
+    border:1px solid var(--sand-line);
+    background:var(--white);
+    padding:10px 16px;
+    font:500 14px 'Work Sans';
+    border-radius:8px;
+    cursor:pointer;
+    color:var(--charcoal);
+    transition:all .15s ease;
+  }
+  .pill-select button.active{
+    border-color:var(--rust);
+    background:rgba(181,85,31,0.08);
+    color:var(--rust);
+  }
+  .pill-select button .sub{
+    display:block;
+    font-size:11px;
+    opacity:0.6;
+    font-weight:400;
+  }
+
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .opt-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 16px;
+    background:var(--white);
+    border:1px solid var(--sand-line);
+    border-radius:10px;
+  }
+  .opt-row label{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:15px;
+    cursor:pointer;
+  }
+  .opt-row .price-tag{
+    font-size:13px;
+    color:var(--alu);
+    font-variant-numeric: tabular-nums;
+  }
+  .opt-row input[type=checkbox]{
+    width:18px; height:18px;
+    accent-color:var(--rust);
+  }
+
+  .section-title{
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--wood);
+    margin: 40px 0 16px;
+  }
+
+  /* ---------- RIGHT: preview + price ---------- */
+  .stage{
+    background:var(--charcoal);
+    color:var(--white);
+    padding:48px 44px;
+    display:flex;
+    flex-direction:column;
+    position:sticky;
+    top:0;
+    height:100vh;
+  }
+  .drawing{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:220px;
+  }
+  .drawing svg{ width:100%; height:auto; max-height:280px; }
+  .dim-line{ stroke:var(--alu); stroke-width:1; }
+  .dim-text{ fill:var(--alu); font:400 12px 'Work Sans'; }
+
+  .price-box{
+    border-top:1px solid rgba(255,255,255,0.12);
+    padding-top:28px;
+  }
+  .price-line{
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+    padding:7px 0;
+    color:rgba(251,250,246,0.7);
+  }
+  .price-line span:last-child{
+    font-variant-numeric: tabular-nums;
+    color:var(--white);
+  }
+  .price-total{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-top:18px;
+    padding-top:18px;
+    border-top:1px solid rgba(255,255,255,0.12);
+  }
+  .price-total .label{
+    font-size:14px;
+    color:rgba(251,250,246,0.7);
+  }
+  .price-total .amount{
+    font-family:'Fraunces';
+    font-style:italic;
+    font-size:40px;
+    color:var(--rust-light);
+    font-variant-numeric: tabular-nums;
+  }
+  .price-note{
+    font-size:12px;
+    color:rgba(251,250,246,0.4);
+    margin-top:10px;
+    line-height:1.5;
+  }
+  .cta{
+    margin-top:24px;
+    width:100%;
+    padding:16px;
+    background:var(--rust);
+    color:var(--white);
+    border:none;
+    border-radius:10px;
+    font:500 15px 'Work Sans';
+    cursor:pointer;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- LEFT: CONFIGURATOR -->
+  <div class="config">
+    <div class="brand">ATELIER OMBRAGE</div>
+    <h1>Configurez votre <em id="productNameHeadline">pergola</em> sur mesure</h1>
+
+    <div class="toggle">
+      <button class="active" data-product="pergola">Pergola</button>
+      <button data-product="veranda">Véranda</button>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <span>Largeur</span>
+        <span class="val"><span id="widthVal">4.0</span> m</span>
+      </div>
+      <input type="range" id="width" min="2" max="8" step="0.1" value="4">
+      <div class="range-bounds"><span>2 m</span><span>8 m</span></div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <span>Profondeur</span>
+        <span class="val"><span id="depthVal">3.0</span> m</span>
+      </div>
+      <input type="range" id="depth" min="2" max="7" step="0.1" value="3">
+      <div class="range-bounds"><span>2 m</span><span>7 m</span></div>
+    </div>
+
+    <div class="section-title">Matériau de la structure</div>
+    <div class="pill-select" id="materialSelect">
+      <button class="active" data-material="alu">Aluminium<span class="sub">léger, sans entretien</span></button>
+    </div>
+
+    <div class="section-title" id="optionsTitle">Options</div>
+    <div class="options" id="optionsList"></div>
+
+    <div class="section-title">Teinte</div>
+    <div class="pill-select" id="colorSelect">
+      <button class="active" data-color="standard" data-pct="0">RAL standard</button>
+      <button data-color="sur-mesure" data-pct="8">Teinte sur mesure <span class="sub">+8%</span></button>
+    </div>
+  </div>
+
+  <!-- RIGHT: LIVE PREVIEW + PRICE -->
+  <div class="stage">
+    <div class="drawing">
+      <svg id="svgDrawing" viewBox="0 0 400 260"></svg>
+    </div>
+
+    <div class="price-box">
+      <div id="priceLines"></div>
+      <div class="price-total">
+        <span class="label">Prix estimé TTC</span>
+        <span class="amount" id="priceTotal">0 €</span>
+      </div>
+      <div class="price-note">Estimation indicative, hors pose complexe (dénivelé, ancrage béton renforcé). Devis définitif après relevé sur site.</div>
+      <button class="cta">Demander un devis précis</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ==========================================================
+   MODÈLE DE PRIX — à remplacer par vos vrais tarifs
+   ========================================================== */
+const PRICING = {
+  pergola: {
+    base: 450,                 // forfait pose fixe
+    perM2: { alu: 220 },
+    options: [
+      { id:'store',   label:'Store banne enroulable intégré', desc:'protection solaire motorisée', perM2: 35 },
+      { id:'led',     label:'Éclairage LED intégré',          desc:'bandeau dimmable dans les lames', flat: 180 },
+      { id:'motor',   label:'Lames orientables motorisées',   desc:'pilotage télécommande + appli', flat: 650 },
+      { id:'store_lateral', label:'Brise-vue latéraux (x2)',  desc:'toile coulissante sur rail', flat: 420 },
+    ]
+  },
+  veranda: {
+    base: 900,
+    perM2: { alu: 950 },
+    options: [
+      { id:'triple',  label:'Vitrage triple',                 desc:'isolation thermique renforcée', pctOfM2: 12 },
+      { id:'porte',   label:'Porte coulissante galandage',    desc:'ouverture totale sur le jardin', flat: 850 },
+      { id:'chauffage', label:'Chauffage au sol intégré',     desc:'régulation thermostatique', flat: 1200 },
+      { id:'store_int', label:'Stores intérieurs motorisés',  desc:'occultation et confort d’été', perM2: 40 },
+    ]
+  }
+};
+
+let state = {
+  product: 'pergola',
+  width: 4.0,
+  depth: 3.0,
+  material: 'alu',
+  colorPct: 0,
+  options: {}
+};
+
+const el = id => document.getElementById(id);
+
+function renderOptions(){
+  const list = el('optionsList');
+  list.innerHTML = '';
+  state.options = {};
+  PRICING[state.product].options.forEach(opt=>{
+    state.options[opt.id] = false;
+    const row = document.createElement('div');
+    row.className = 'opt-row';
+    row.innerHTML = `
+      <label>
+        <input type="checkbox" data-opt="${opt.id}">
+        <span>${opt.label}<br><span style="font-size:12px;color:var(--alu);font-weight:400;">${opt.desc}</span></span>
+      </label>
+      <span class="price-tag">${optionPriceLabel(opt)}</span>
+    `;
+    list.appendChild(row);
+  });
+  list.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+    cb.addEventListener('change', e=>{
+      state.options[e.target.dataset.opt] = e.target.checked;
+      update();
+    });
+  });
+}
+
+function optionPriceLabel(opt){
+  if(opt.flat) return '+' + opt.flat.toLocaleString('fr-FR') + ' €';
+  if(opt.perM2) return '+' + opt.perM2 + ' €/m²';
+  if(opt.pctOfM2) return '+' + opt.pctOfM2 + '%';
+  return '';
+}
+
+function computePrice(){
+  const surface = state.width * state.depth;
+  const cfg = PRICING[state.product];
+  const base = cfg.base;
+  const structure = surface * cfg.perM2[state.material];
+
+  let optionsTotal = 0;
+  const lines = [];
+  lines.push({label:`Forfait pose (${state.product === 'pergola' ? 'pergola' : 'véranda'})`, value: base});
+  lines.push({label:`Structure aluminium — ${surface.toFixed(1)} m²`, value: structure});
+
+  cfg.options.forEach(opt=>{
+    if(!state.options[opt.id]) return;
+    let v = 0;
+    if(opt.flat) v = opt.flat;
+    if(opt.perM2) v = opt.perM2 * surface;
+    if(opt.pctOfM2) v = (structure) * (opt.pctOfM2/100);
+    optionsTotal += v;
+    lines.push({label: opt.label, value: v});
+  });
+
+  let subtotal = base + structure + optionsTotal;
+  const colorSurcharge = subtotal * (state.colorPct/100);
+  if(state.colorPct > 0){
+    lines.push({label:'Teinte sur mesure', value: colorSurcharge});
+  }
+  const total = subtotal + colorSurcharge;
+
+  return { lines, total, surface };
+}
+
+function fmt(n){
+  return n.toLocaleString('fr-FR', {maximumFractionDigits:0}) + ' €';
+}
+
+function renderPrice(){
+  const { lines, total } = computePrice();
+  el('priceLines').innerHTML = lines.map(l =>
+    `<div class="price-line"><span>${l.label}</span><span>${fmt(l.value)}</span></div>`
+  ).join('');
+  el('priceTotal').textContent = fmt(total);
+}
+
+function renderDrawing(){
+  const svg = el('svgDrawing');
+  const maxW = 320, maxH = 190;
+  const ratio = state.width / state.depth;
+  let w, h;
+  if(ratio >= maxW/maxH){ w = maxW; h = maxW/ratio; }
+  else { h = maxH; w = maxH*ratio; }
+  const x = (400 - w)/2, y = (260 - h)/2 - 10;
+
+  const isVeranda = state.product === 'veranda';
+  const fill = isVeranda ? 'rgba(154,158,146,0.18)' : 'none';
+  const stroke = '#9A9E92';
+
+  let panels = '';
+  if(isVeranda){
+    const cols = Math.max(2, Math.round(state.width / 1.2));
+    for(let i=1;i<cols;i++){
+      const px = x + (w/cols)*i;
+      panels += `<line x1="${px}" y1="${y}" x2="${px}" y2="${y+h}" stroke="${stroke}" stroke-width="1" opacity="0.5"/>`;
+    }
+  } else {
+    const slats = Math.max(4, Math.round(state.width * 2));
+    for(let i=1;i<slats;i++){
+      const px = x + (w/slats)*i;
+      panels += `<line x1="${px}" y1="${y}" x2="${px}" y2="${y+h}" stroke="${stroke}" stroke-width="2" opacity="0.35"/>`;
+    }
+  }
+
+  svg.innerHTML = `
+    <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${stroke}" stroke-width="2.5" rx="2"/>
+    ${panels}
+    <line class="dim-line" x1="${x}" y1="${y+h+22}" x2="${x+w}" y2="${y+h+22}"/>
+    <line class="dim-line" x1="${x}" y1="${y+h+16}" x2="${x}" y2="${y+h+28}"/>
+    <line class="dim-line" x1="${x+w}" y1="${y+h+16}" x2="${x+w}" y2="${y+h+28}"/>
+    <text class="dim-text" x="${x+w/2}" y="${y+h+40}" text-anchor="middle">${state.width.toFixed(1)} m</text>
+
+    <line class="dim-line" x1="${x+w+22}" y1="${y}" x2="${x+w+22}" y2="${y+h}"/>
+    <line class="dim-line" x1="${x+w+16}" y1="${y}" x2="${x+w+28}" y2="${y}"/>
+    <line class="dim-line" x1="${x+w+16}" y1="${y+h}" x2="${x+w+28}" y2="${y+h}"/>
+    <text class="dim-text" x="${x+w+42}" y="${y+h/2}" text-anchor="middle" transform="rotate(90 ${x+w+42} ${y+h/2})">${state.depth.toFixed(1)} m</text>
+  `;
+}
+
+function update(){
+  renderDrawing();
+  renderPrice();
+}
+
+/* ---- events ---- */
+document.querySelectorAll('.toggle button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.toggle button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.product = btn.dataset.product;
+    el('productNameHeadline').textContent = state.product === 'pergola' ? 'pergola' : 'véranda';
+    renderOptions();
+    update();
+  });
+});
+
+el('width').addEventListener('input', e=>{
+  state.width = parseFloat(e.target.value);
+  el('widthVal').textContent = state.width.toFixed(1);
+  update();
+});
+el('depth').addEventListener('input', e=>{
+  state.depth = parseFloat(e.target.value);
+  el('depthVal').textContent = state.depth.toFixed(1);
+  update();
+});
+
+document.querySelectorAll('#materialSelect button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#materialSelect button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.material = btn.dataset.material;
+    update();
+  });
+});
+
+document.querySelectorAll('#colorSelect button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#colorSelect button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.colorPct = parseFloat(btn.dataset.pct);
+    update();
+  });
+});
+
+/* init */
+renderOptions();
+update();
+</script>
+
+</body>
+</html>
