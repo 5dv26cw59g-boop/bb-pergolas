@@ -141,7 +141,7 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
       const customerName = `${firstName} ${lastName}`.trim();
       const pdfAttachment = Buffer.from(pdf.output('arraybuffer'));
       try {
-      await transporter.sendMail({
+      transporter.sendMail({
         from: process.env.SMTP_FROM || process.env.SMTP_USER,
         to: customerEmail,
         bcc: QUOTE_RECIPIENT,
@@ -188,13 +188,12 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
             </div>
           </div>`,
         attachments: [{ filename: `Bon de commande - ${customerName}.pdf`, content: pdfAttachment, contentType: 'application/pdf' }],
-      });
-      } catch (error) {
+      }).catch((error) => {
         console.error(`Paiement ${session.id} confirmé, mais e-mail non envoyé :`, error);
-      }
+      })
 
     }
-    console.log(`Paiement Stripe confirmé et e-mails envoyés : ${session.id}`);
+    console.log(`Paiement Stripe confirmé, traitement de l’e-mail lancé : ${session.id}`);
   }
   return res.json({ received: true });
 });
